@@ -1,7 +1,7 @@
 import { NextButton, PrevButton } from "~/components/Carousel/NavButton";
 import { useCarousel } from "~/components/hooks/use-carousel";
 import type { Product } from "~/types/product";
-import ProductCard from "./components/ProductCard";
+import ProductCard from "./ProductCard";
 
 export const ProductCarousel: React.FC<{
   products: Product[];

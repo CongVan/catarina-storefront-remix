@@ -27,8 +27,8 @@ export function ProductHorizontalCard({
   price_html,
   className,
 }: Product & { className?: string }) {
-  const brand = attributes?.find((a) => a.name === "brand");
-  const fragrants = attributes?.find((a) => a.name === "fragrants");
+  const brand = attributes?.find((a) => a.slug === "brand");
+  const fragrants = attributes?.find((a) => a.slug === "fragrants");
 
   return (
     <div
@@ -68,7 +68,7 @@ export function ProductHorizontalCard({
           dangerouslySetInnerHTML={{ __html: name }}
         ></SfLink>
 
-        {fragrants?.options?.length > 0 && (
+        {(fragrants?.options?.length || 0) > 0 && (
           <p className="my-2 line-clamp-1 block font-normal  text-neutral-700 sf-text-sm">
             {fragrants?.options.join(" • ")}
           </p>

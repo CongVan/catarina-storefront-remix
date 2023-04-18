@@ -1,8 +1,18 @@
+import { twMerge } from "tailwind-merge";
 import { Skeleton } from "~/components/Skeleton";
 
-export default function ProductCardSkeleton() {
+type Props = {
+  className?: string;
+};
+
+export default function ProductCardSkeleton({ className }: Props) {
   return (
-    <div className="animate-pulse rounded-md border border-neutral-200 hover:shadow-lg">
+    <div
+      className={twMerge(
+        "animate-pulse rounded-md border border-neutral-200 hover:shadow-lg",
+        className
+      )}
+    >
       <Skeleton className="aspect-square h-[232px] w-full rounded-none" />
 
       <div className="border-t border-neutral-200 p-4">

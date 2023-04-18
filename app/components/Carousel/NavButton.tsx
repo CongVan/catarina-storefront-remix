@@ -1,13 +1,11 @@
 import { SfButton } from "@storefront-ui/react";
-import {
-  IconChevronDownRight,
-  IconChevronLeft,
-  IconChevronRight,
-} from "@tabler/icons-react";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+
 type Props = {
   enabled?: boolean;
   onClick: () => void;
 };
+
 export const NextButton: React.FC<Props> = (props) => {
   const { enabled, onClick } = props;
 

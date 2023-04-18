@@ -1,43 +1,56 @@
-import { SfButton } from "@storefront-ui/react";
-import { IconHeart, IconShoppingCart, IconUser } from "@tabler/icons-react";
+import { Link, useRouteLoaderData } from "@remix-run/react";
+import {
+  SfButton,
+  SfIconFavorite,
+  SfIconPerson,
+  SfIconShoppingCart,
+} from "@storefront-ui/react";
 import classNames from "classnames";
+import type { Category } from "~/types/product-category";
 
-export default function Header() {
+export default function TopNav() {
+  const { categories } = useRouteLoaderData("root") as {
+    categories: Category[];
+  };
   const actionItems = [
     {
-      icon: <IconShoppingCart />,
+      icon: <SfIconShoppingCart />,
       ariaLabel: "Cart",
     },
     {
-      icon: <IconHeart />,
+      icon: <SfIconFavorite />,
       ariaLabel: "Wishlist",
     },
     {
       label: "Log in",
-      icon: <IconUser />,
+      icon: <SfIconPerson />,
       ariaLabel: "Log in",
     },
   ];
 
   return (
-    <div className="h-full w-full bg-neutral-50">
+    <div className=" h-full w-full bg-neutral-50">
       <header className="flex h-14 w-full justify-center border-b border-neutral-200 bg-white md:h-20">
-        <div className="flex h-full w-full max-w-[1536px] flex-row flex-nowrap items-center justify-start px-4 md:px-10">
+        <div className="container relative mx-auto flex h-full flex-row flex-nowrap items-center justify-start">
           <a
             href="/"
             aria-label="SF Homepage"
-            className="inline-block font-bold uppercase text-primary-700 sf-headline-4"
+            className="inline-block text-primary-700"
           >
-            Catarina
+            CATARINA
           </a>
-          {/* <SfButton
-            className="mr-auto block !px-2"
-            type="button"
-            slotPrefix={<SfIconMenu />}
-            variant="tertiary"
-          >
-            <span className="hidden md:inline-flex">Categories</span>
-          </SfButton> */}
+          <nav className="">
+            {categories.map((c) => (
+              <Link
+                to={"/c/" + c.slug + "-" + c.id}
+                key={c.id}
+                className="px-2.5 py-1.5"
+              >
+                {c.name}
+              </Link>
+            ))}
+          </nav>
+
           <nav className="ml-auto flex flex-row flex-nowrap">
             {actionItems.map((actionItem) => (
               <SfButton

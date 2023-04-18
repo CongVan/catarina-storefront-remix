@@ -1,4 +1,4 @@
-import type { Product } from "~/types/product";
+import { Link } from "@remix-run/react";
 import {
   SfButton,
   SfCounter,
@@ -7,6 +7,7 @@ import {
   SfRating,
 } from "@storefront-ui/react";
 import { twMerge } from "tailwind-merge";
+import type { Product } from "~/types/product";
 
 export default function ProductCard({
   images,
@@ -15,11 +16,13 @@ export default function ProductCard({
   rating_count,
   average_rating,
   price_html,
+  slug,
+  id,
   className,
 }: Product & { className?: string }) {
-  const brand = attributes?.find((a) => a.name === "brand");
-  const fragrants = attributes?.find((a) => a.name === "fragrants");
-
+  const brand = attributes?.find((a) => a.slug === "brand");
+  const fragrants = attributes?.find((a) => a.slug === "fragrants");
+  const linkToDetail = `/${slug}-${id}`;
   return (
     <div
       className={twMerge(
@@ -27,16 +30,14 @@ export default function ProductCard({
         className
       )}
     >
-      <div className="relative">
-        <SfLink href="#" className="p-5">
+      <div className="relative py-6">
+        <Link to={linkToDetail} className="p-5">
           <img
             src={images?.[0].src}
-            alt="Great product"
-            className="mx-auto aspect-square h-auto rounded-md object-cover"
-            width={180}
-            height={180}
+            alt={name}
+            className="mx-auto aspect-square h-auto w-[120px] max-w-[160px] rounded-md object-cover md:w-full"
           />
-        </SfLink>
+        </Link>
         <SfButton
           type="button"
           variant="tertiary"
@@ -49,10 +50,16 @@ export default function ProductCard({
         </SfButton>
       </div>
       <div className="flex flex-1 flex-col border-t border-neutral-200 p-4">
-        <SfLink className="block">{brand?.options.join(",")}</SfLink>
-        <SfLink href="#" variant="secondary" className="no-underline">
-          {name}
-        </SfLink>
+        <SfLink
+          className="block"
+          dangerouslySetInnerHTML={{ __html: brand?.options?.join(",") || "" }}
+        ></SfLink>
+        <SfLink
+          href={linkToDetail}
+          variant="secondary"
+          className="no-underline"
+          dangerouslySetInnerHTML={{ __html: name }}
+        ></SfLink>
         <div className="flex items-center pt-1">
           <SfRating size="xs" value={average_rating} max={5} />
 
@@ -60,10 +67,10 @@ export default function ProductCard({
             <SfCounter size="xs">{rating_count}</SfCounter>
           </SfLink>
         </div>
-        {fragrants?.options?.length > 0 && (
-          <p className="my-2 block max-h-[50px] flex-1 overflow-hidden font-normal text-neutral-700 sf-text-sm">
+        {(fragrants?.options?.length || 0) > 0 && (
+          <div className="my-2 block flex-1 overflow-hidden font-normal text-neutral-700 sf-text-xs  md:sf-text-sm">
             {fragrants?.options.join(" • ")}
-          </p>
+          </div>
         )}
 
         <span

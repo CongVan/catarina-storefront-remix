@@ -1,7 +1,7 @@
-import type { ProductAttribute } from "@/types/product-attribute";
-import type { Category } from "@/types/product-category";
-import type { WooImage } from "@/types/product-image";
-import type { Tag } from "@/types/product-tag";
+import type { ProductAttribute } from "~/types/product-attribute";
+import type { Category } from "~/types/product-category";
+import type { WooImage } from "~/types/product-image";
+import type { Tag } from "~/types/product-tag";
 
 export type StockStatus = "instock" | "outofstock" | "onbackorder";
 export type ProductStatus = "draft" | "pending" | "private" | "publish";
@@ -30,7 +30,7 @@ export interface Product {
   rating_count: number;
   type: ProductType;
   related_ids: number[];
-  categories: Category[];
+  categories?: Category[];
   tags: Tag[];
   images: WooImage[];
   attributes: ProductAttribute[];
