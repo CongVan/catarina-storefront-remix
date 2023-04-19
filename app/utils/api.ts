@@ -14,7 +14,7 @@ export const $fetch = async <T>(url: string, { params, init }: Params = {}) => {
     params ? "?" + qs.stringify(params || {}, { arrayFormat: "comma" }) : ""
   }`;
 
-  const response = await fetch(_url);
+  const response = await fetch(_url, init);
   const total = +(response.headers.get("X-WP-Total") + "");
   const totalPage = +(response.headers.get("X-WP-TotalPages") + "");
   const meta = {

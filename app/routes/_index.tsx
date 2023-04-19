@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { CategoryProductCarousel } from "~/modules/home/templates/CategoryProductCarousel";
 import { ProductCarouselSkeleton } from "~/modules/home/templates/ProductCarouselSkeleton";
 import { ProductCarousel } from "~/modules/product/components/ProductCarousel";
-import store from "~/store/app";
+
 import type { Product } from "~/types/product";
 import type { Category } from "~/types/product-category";
 import { $fetch } from "~/utils/api";
@@ -27,7 +27,6 @@ const fetchPopular = () =>
   });
 
 export const loader = async (a: LoaderArgs) => {
-  console.log("index loader", store.getState().categories);
   const { data: categories } = await $fetch<Category[]>(
     "/products/categories",
     {

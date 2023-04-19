@@ -1,5 +1,5 @@
-import type { LinksFunction } from "@remix-run/node";
-import { json, LoaderArgs } from "@remix-run/node";
+import type { LinksFunction, LoaderArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import {
   Links,
@@ -10,13 +10,14 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import store from "~/store/app";
+import { ThemeProvider } from "~/context/theme";
 
 import stylesheet from "~/styles/tailwind.css";
 import type { Category } from "~/types/product-category";
+import type { User } from "~/types/user";
 import { $fetch } from "~/utils/api";
 import { Layout } from "./components/Layout";
-import { getUser } from "./session.server";
+import { getUser, getUserId } from "./session.server";
 
 export const links: LinksFunction = () => {
   return [
@@ -34,7 +35,9 @@ export const links: LinksFunction = () => {
   ];
 };
 
-export async function loader() {
+export async function loader({ request }: LoaderArgs) {
+  const userId = await getUserId(request);
+  let user: User | null = null;
   const { data: categories } = await $fetch<Category[]>(
     "/products/categories",
     {
@@ -44,8 +47,15 @@ export async function loader() {
       },
     }
   );
+
+  if (userId) {
+    const { data } = await $fetch<User>("/customers/" + userId);
+    user = data;
+  }
+
   return json({
     categories,
+    user,
     ENV: {
       SITE_URL: process.env.SITE_URL,
     },
@@ -75,7 +85,9 @@ export default function App() {
           <Links />
         </head>
         <body>
-          <Layout />
+          <ThemeProvider>
+            <Layout />
+          </ThemeProvider>
           <ScrollRestoration />
           <script
             dangerouslySetInnerHTML={{

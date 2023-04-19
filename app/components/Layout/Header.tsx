@@ -8,12 +8,16 @@ import {
 } from "@storefront-ui/react";
 import { IconSearch } from "@tabler/icons-react";
 import classNames from "classnames";
+import LoginButton from "~/components/Layout/LoginButton";
 import { SearchBox } from "~/components/Layout/SearchBox";
+import { UserDropdown } from "~/components/Layout/UserDropdown";
 import type { Category } from "~/types/product-category";
+import type { User } from "~/types/user";
 
 export default function TopNav() {
-  const { categories } = useRouteLoaderData("root") as {
+  const { categories, user } = useRouteLoaderData("root") as {
     categories: Category[];
+    user: User | null;
   };
   const actionItems = [
     {
@@ -23,11 +27,6 @@ export default function TopNav() {
     {
       icon: <SfIconFavorite />,
       ariaLabel: "Wishlist",
-    },
-    {
-      label: "Log in",
-      icon: <SfIconPerson />,
-      ariaLabel: "Log in",
     },
   ];
 
@@ -49,8 +48,7 @@ export default function TopNav() {
             {actionItems.map((actionItem) => (
               <SfButton
                 className={classNames(
-                  "-ml-0.5 mr-2 text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700",
-                  actionItem.label === "Log in" ? "lg:hidden" : null
+                  "-ml-0.5 mr-2 text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700"
                 )}
                 key={actionItem.ariaLabel}
                 aria-label={actionItem.ariaLabel}
@@ -59,15 +57,7 @@ export default function TopNav() {
                 square
               />
             ))}
-            <SfButton
-              className="-ml-0.5 mr-2 hidden text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700 lg:inline-flex"
-              key={actionItems[2].ariaLabel}
-              aria-label={actionItems[2].ariaLabel}
-              variant="tertiary"
-              slotPrefix={actionItems[2].icon}
-            >
-              Log In
-            </SfButton>
+            {user ? <UserDropdown /> : <LoginButton />}
           </nav>
         </div>
       </header>
