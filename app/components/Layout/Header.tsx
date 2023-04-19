@@ -1,11 +1,14 @@
-import { Link, useRouteLoaderData } from "@remix-run/react";
+import { Form, Link, useRouteLoaderData } from "@remix-run/react";
 import {
   SfButton,
   SfIconFavorite,
   SfIconPerson,
   SfIconShoppingCart,
+  SfInput,
 } from "@storefront-ui/react";
+import { IconSearch } from "@tabler/icons-react";
 import classNames from "classnames";
+import { SearchBox } from "~/components/Layout/SearchBox";
 import type { Category } from "~/types/product-category";
 
 export default function TopNav() {
@@ -29,28 +32,19 @@ export default function TopNav() {
   ];
 
   return (
-    <div className=" h-full w-full bg-neutral-50">
+    <div className=" h-full w-full">
       <header className="flex h-14 w-full justify-center border-b border-neutral-200 bg-white md:h-20">
         <div className="container relative mx-auto flex h-full flex-row flex-nowrap items-center justify-start">
           <a
             href="/"
             aria-label="SF Homepage"
-            className="inline-block text-primary-700"
+            className="inline-block font-bold text-primary-700"
           >
             CATARINA
           </a>
-          <nav className="">
-            {categories.map((c) => (
-              <Link
-                to={"/c/" + c.slug + "-" + c.id}
-                key={c.id}
-                className="px-2.5 py-1.5"
-              >
-                {c.name}
-              </Link>
-            ))}
-          </nav>
-
+          <div className="mx-10 flex-1">
+            <SearchBox />
+          </div>
           <nav className="ml-auto flex flex-row flex-nowrap">
             {actionItems.map((actionItem) => (
               <SfButton
@@ -77,6 +71,19 @@ export default function TopNav() {
           </nav>
         </div>
       </header>
+      <div className="flex h-12 w-full items-center justify-center border-b border-neutral-200 bg-white">
+        <nav className="container mx-auto flex h-full items-center border-l border-neutral-200">
+          {categories.map((c) => (
+            <Link
+              to={"/c/" + c.slug + "-" + c.id}
+              key={c.id}
+              className="flex h-full items-center border-r border-neutral-200 px-5 py-1.5"
+            >
+              {c.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 }

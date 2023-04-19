@@ -1,22 +1,23 @@
 import { Await, useLoaderData } from "@remix-run/react";
 import { SfButton, SfLoaderLinear } from "@storefront-ui/react";
-import { Fragment, Suspense, useState } from "react";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { Suspense, useState } from "react";
+import { useQuery } from "react-query";
+import { NoData } from "~/components/NoData";
 import ProductCard from "~/modules/product/components/ProductCard";
 import ProductCardSkeleton from "~/modules/product/components/ProductCardSkeleton";
 import type { loader } from "~/routes/c.$slug";
-import { fetchProducts } from "~/routes/c.$slug";
 import type { WooResponse } from "~/types/common";
 import type { Product } from "~/types/product";
 import { $fetch } from "~/utils/api";
 
 type Props = {
   promise: Promise<WooResponse<Product[]>>;
+  showCount?: boolean;
 };
-export const ProductList: React.FC<Props> = ({ promise }) => {
+export const ProductList: React.FC<Props> = ({ promise, showCount }) => {
   const { query } = useLoaderData<typeof loader>();
   const containerClass =
-    "mt-10 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 border border-b-0 border-r-0";
+    "mt-5 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 border border-b-0 border-r-0";
 
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasMore] = useState(true);
@@ -38,43 +39,6 @@ export const ProductList: React.FC<Props> = ({ promise }) => {
       },
     }
   );
-  // const {
-  //   data,
-  //   fetchNextPage,
-  //   isLoading,
-  //   isFetchingNextPage,
-  //   isFetching,
-  //   hasNextPage,
-  // } = useInfiniteQuery(
-  //   "products",
-  //   async ({ pageParam = 2 }) => {
-  //     console.log("pageParam", pageParam);
-
-  //     const { data, meta } = await $fetch<Product[]>("/products", {
-  //       params: {
-  //         ...query,
-  //         page: pageParam,
-  //       },
-  //     });
-
-  //     console.log("page ", pageParam, data, meta);
-
-  //     return { data, meta };
-  //   },
-  //   {
-  //     keepPreviousData: false,
-  //     refetchInterval: 0,
-  //     select: (data) => ({
-  //       pages: [...data.pages],
-  //       pageParams: [...data.pageParams],
-  //     }),
-  //     getPreviousPageParam: ({ meta: { page, totalPage } }) =>
-  //       page ? (page > 0 ? page - 1 : undefined) : undefined,
-  //     getNextPageParam: ({ meta: { page, totalPage } }) =>
-  //       page ? (page <= totalPage ? page + 1 : undefined) : undefined,
-  //   }
-  // );
-  console.log("data", data);
 
   const renderLoader = () => {
     return (
@@ -93,45 +57,57 @@ export const ProductList: React.FC<Props> = ({ promise }) => {
     <div>
       <Suspense fallback={renderLoader()}>
         <Await resolve={promise}>
-          {({ data: products }) => {
+          {({ data: products, meta }) => {
             return (
               <>
-                <div className={containerClass}>
-                  {products.map((p) => (
-                    <ProductCard
-                      key={p.id}
-                      {...p}
-                      className="rounded-none border-l-0 border-t-0"
-                    />
-                  ))}
-                  {resultMore.map((p) => (
-                    <ProductCard
-                      key={p.id}
-                      {...p}
-                      className="rounded-none border-l-0 border-t-0"
-                    />
-                  ))}
-                </div>
-                <div className="w-full py-5 text-center">
-                  {hasNextPage && (
-                    <SfButton
-                      className="relative overflow-hidden px-10 font-thin uppercase"
-                      onClick={() => setPage((p) => p + 1)}
-                      disabled={isLoading}
-                    >
-                      {isLoading && (
-                        <div className="absolute left-0 h-full w-full">
-                          <SfLoaderLinear
-                            ariaLabel="loading"
-                            className="h-full w-full bg-transparent text-primary-400 opacity-40"
-                            size="lg"
-                          />
-                        </div>
+                {showCount && (
+                  <div className=" font-normal sf-headline-4">
+                    Tìm thấy ({meta.total}) sản phẩm
+                  </div>
+                )}
+
+                {products?.length === 0 ? (
+                  <NoData />
+                ) : (
+                  <>
+                    <div className={containerClass}>
+                      {products.map((p) => (
+                        <ProductCard
+                          key={p.id}
+                          {...p}
+                          className="rounded-none border-l-0 border-t-0"
+                        />
+                      ))}
+                      {resultMore.map((p) => (
+                        <ProductCard
+                          key={p.id}
+                          {...p}
+                          className="rounded-none border-l-0 border-t-0"
+                        />
+                      ))}
+                    </div>
+                    <div className="w-full py-5 text-center">
+                      {hasNextPage && meta.total > query.per_page && (
+                        <SfButton
+                          className="relative overflow-hidden px-10 font-thin uppercase"
+                          onClick={() => setPage((p) => p + 1)}
+                          disabled={isLoading}
+                        >
+                          {isLoading && (
+                            <div className="absolute left-0 h-full w-full">
+                              <SfLoaderLinear
+                                ariaLabel="loading"
+                                className="h-full w-full bg-transparent text-primary-400 opacity-40"
+                                size="lg"
+                              />
+                            </div>
+                          )}
+                          Xem thêm
+                        </SfButton>
                       )}
-                      Xem thêm
-                    </SfButton>
-                  )}
-                </div>
+                    </div>
+                  </>
+                )}
               </>
             );
           }}

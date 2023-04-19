@@ -12,7 +12,7 @@ export const Layout = () => {
         {(s) => (
           <>
             <Header />
-            <main className="mt-10">
+            <main className="mt-5">
               <Outlet />
             </main>
             <Footer />
