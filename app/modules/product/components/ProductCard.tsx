@@ -8,6 +8,7 @@ import {
 } from "@storefront-ui/react";
 import { twMerge } from "tailwind-merge";
 import type { Product } from "~/types/product";
+import { getBrand } from "~/utils/helper";
 
 export default function ProductCard({
   images,
@@ -20,8 +21,8 @@ export default function ProductCard({
   id,
   className,
 }: Product & { className?: string }) {
-  const brand = attributes?.find((a) => a.slug === "brand");
-  const fragrants = attributes?.find((a) => a.slug === "fragrants");
+  const brand = attributes?.find((a) => a.name === "Thương hiệu");
+  const fragrants = attributes?.find((a) => a.name === "Mùi hương");
   const linkToDetail = `/${slug}-${id}`;
   return (
     <div

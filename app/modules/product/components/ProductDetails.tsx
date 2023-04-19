@@ -19,6 +19,7 @@ import type { ChangeEvent } from "react";
 import { useId } from "react";
 import { useCounter } from "react-use";
 import type { loader } from "~/routes/$";
+import { getBrand } from "~/utils/helper";
 
 export default function ProductDetails() {
   const { product } = useLoaderData<typeof loader>();
@@ -34,12 +35,26 @@ export default function ProductDetails() {
   }
   return (
     <section className="md:max-w-[640px]">
-      {product.on_sale && (
-        <div className="mb-4 inline-flex items-center justify-center bg-secondary-600 px-3 py-1.5 text-sm font-medium text-white">
-          <SfIconSell size="sm" className="mr-1.5" />
-          Sale
+      <div className="mb-4 flex gap-2">
+        {product.categories?.map((c) => (
+          <div
+            key={c.id}
+            className="inline-flex items-center justify-center rounded-full border border-secondary-600 bg-secondary-50 px-3 py-1.5 text-sm font-semibold text-secondary-600"
+          >
+            {c.name}
+          </div>
+        ))}
+        <div className="inline-flex items-center justify-center rounded-full border border-secondary-600 bg-secondary-50 px-3 py-1.5 text-sm font-semibold text-secondary-600">
+          {getBrand(product)}
         </div>
-      )}
+
+        {product.on_sale && (
+          <div className="mb-4 inline-flex items-center justify-center bg-secondary-600 px-3 py-1.5 text-sm font-medium text-white">
+            <SfIconSell size="sm" className="mr-1.5" />
+            Sale
+          </div>
+        )}
+      </div>
 
       <h1
         className="mb-1 font-bold sf-headline-2"

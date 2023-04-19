@@ -53,7 +53,7 @@ export default function ProductPage() {
           {product.name}
         </SfLink>
       </div>
-      <div className="grid grid-cols-2 items-start gap-10">
+      <div className="grid items-start gap-10 md:grid-cols-2">
         <ProductGallery />
         <ProductDetails />
       </div>

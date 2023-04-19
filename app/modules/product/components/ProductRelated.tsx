@@ -20,8 +20,8 @@ export const ProductRelated: React.FC = () => {
       containScroll: "trimSnaps",
     });
   return (
-    <div ref={ref} className="mt-10">
-      <h3 className=" mb-5 text-center font-semibold uppercase  sf-headline-2">
+    <div className="mt-10">
+      <h3 className=" mb-5 text-center font-semibold uppercase  sf-headline-3">
         Sản phẩm liên quan
       </h3>
       <Suspense fallback={<ProductCarouselSkeleton />}>
@@ -36,7 +36,7 @@ export const ProductRelated: React.FC = () => {
                   </div>
                 </div>
                 {/* <code>{JSON.stringify(result, null, 2)}</code> */}
-                <div className="container mx-auto overflow-hidden">
+                <div ref={ref} className="container mx-auto overflow-hidden">
                   <div className="flex py-4">
                     {result.data.map((p: any) => (
                       <div
