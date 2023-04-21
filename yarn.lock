@@ -1924,14 +1924,14 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.6.0.tgz#3c7c9c46e678feefe7a2e5bb609d3dbd665ffb3f"
   integrity sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==
 
-"@storefront-ui/react@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@storefront-ui/react/-/react-2.0.0.tgz#d82b8d15d48201b995621286b372f5d4ca8e3687"
-  integrity sha512-bGXdgVydkgroh+drW8nz3BbkSzLp2tkHPHJFlurv67pTDfUnsa7PEnUo13qHHG15Hy8bmvbuZWqGJodiNNT1rw==
+"@storefront-ui/react@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@storefront-ui/react/-/react-2.1.0.tgz#c5eb781d438cff5b3eed3162b9c7c5ba25fe2865"
+  integrity sha512-3ZPQ6p4cRqF64R2d7TMzqmg3gXA82p3PHqh4HBcXW3fjK4Idyl2v+y33to/BXGYaK1KYIGJ0jc714Ep1F3TvPQ==
   dependencies:
     "@floating-ui/react-dom" "^1.3.0"
-    "@storefront-ui/shared" "2.0.0"
-    "@storefront-ui/tailwind-config" "2.0.0"
+    "@storefront-ui/shared" "2.1.0"
+    "@storefront-ui/tailwind-config" "2.1.0"
     classnames "^2.3.2"
     jw-paginate "^1.0.4"
     merge-refs "^1.1.2"
@@ -1940,23 +1940,23 @@
     react-use "^17.4.0"
     tabbable "^6.1.1"
 
-"@storefront-ui/shared@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@storefront-ui/shared/-/shared-2.0.0.tgz#d24ecd95fb308fbb0e26e55d1753f1a2e2429858"
-  integrity sha512-LUFd5twZap8b77dvxokj9dlevK+vJFSyXZVLyQ4ynrJcgS1j+vZe5iCi16dpHNj2rV0ot4D2pOcFqt/NPmtHzg==
+"@storefront-ui/shared@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@storefront-ui/shared/-/shared-2.1.0.tgz#0d7a666dd335396a59757f536ba9686c9b395bcc"
+  integrity sha512-ycCy1HCmIVtURVw/WCcWeYbwhPSLMUbfe5MIu5sM5S1ljJDhJsfOJcL0q//HdlQw77b6zKN/nC8Hj1DwzWTJmQ==
 
-"@storefront-ui/tailwind-config@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@storefront-ui/tailwind-config/-/tailwind-config-2.0.0.tgz#a46cfacdc9964172d5e4a67c80ded5cbd6515643"
-  integrity sha512-7pRdcxro1VIroveD9UlzoKKTBjnf83qdWBRAfGWTQ5/auBYGvcyReDJ532l1JS2fyQdeZgNctTtLi1FnAba7dw==
+"@storefront-ui/tailwind-config@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@storefront-ui/tailwind-config/-/tailwind-config-2.1.0.tgz#44186d0dd33f658d8b176d01d7577f80e844829b"
+  integrity sha512-6mQCYT68FBBsA50OyAxpSp7FqHcVwL/ZGHEbg2Q+wmcKjgf81GGO6hJPLGC2iUhDjQiAfm5FsaMxk1Anjkb6cA==
   dependencies:
     "@mertasan/tailwindcss-variables" "^2.5.2"
-    "@storefront-ui/tw-plugin-peer-next" "2.0.0"
+    "@storefront-ui/tw-plugin-peer-next" "2.1.0"
 
-"@storefront-ui/tw-plugin-peer-next@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@storefront-ui/tw-plugin-peer-next/-/tw-plugin-peer-next-2.0.0.tgz#5235fff831c8d8dc3d4bfdb7e2efd73365200145"
-  integrity sha512-yMuwFu4kEt6xihFZcq+q7lryVV3pU27qxHeCMyScTZHCsO7Rh/NG1JXGe03QkJPCx+dQBmFjm4KzcvsJo705Qw==
+"@storefront-ui/tw-plugin-peer-next@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@storefront-ui/tw-plugin-peer-next/-/tw-plugin-peer-next-2.1.0.tgz#751a18b0aad083bdc599bc006e70288f08c3d36c"
+  integrity sha512-cnAd9NEkiciNyY2SsD0EjfrF9JirQ9Da72n7Y89OU0mfsZY/NiaWbSQe+ApjRWk8FObOayM6M4X8TKso/uHUHQ==
 
 "@storefront-ui/typography@^2.0.0":
   version "2.0.0"
@@ -5199,6 +5199,11 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
+goober@^2.1.10:
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/goober/-/goober-2.1.13.tgz#e3c06d5578486212a76c9eba860cbc3232ff6d7c"
+  integrity sha512-jFj3BQeleOoy7t93E9rZ2de+ScC4lQICLwiAQmKMg9F6roKGaLSHoCDYKkWlSafg138jejvq/mTdvmnwDQgqoQ==
+
 gopd@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/gopd/-/gopd-1.0.1.tgz#29ff76de69dac7489b7c0918a5788e56477c332c"
@@ -7908,6 +7913,18 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
+
+react-hook-form@^7.43.9:
+  version "7.43.9"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.43.9.tgz#84b56ac2f38f8e946c6032ccb760e13a1037c66d"
+  integrity sha512-AUDN3Pz2NSeoxQ7Hs6OhQhDr6gtF9YRuutGDwPQqhSUAHJSgGl2VeY3qN19MG0SucpjgDiuMJ4iC5T5uB+eaNQ==
+
+react-hot-toast@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-hot-toast/-/react-hot-toast-2.4.0.tgz#b91e7a4c1b6e3068fc599d3d83b4fb48668ae51d"
+  integrity sha512-qnnVbXropKuwUpriVVosgo8QrB+IaPJCpL8oBI6Ov84uvHZ5QQcTp2qg6ku2wNfgJl6rlQXJIQU5q+5lmPOutA==
+  dependencies:
+    goober "^2.1.10"
 
 react-is@^16.13.1:
   version "16.13.1"

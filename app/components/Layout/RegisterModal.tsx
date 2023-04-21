@@ -1,4 +1,11 @@
-import { Form, Link, useLocation } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useLocation,
+  useNavigate,
+  useRevalidator,
+  useRouteLoaderData,
+} from "@remix-run/react";
 import {
   SfModal,
   SfButton,
@@ -6,21 +13,69 @@ import {
   SfInput,
   SfCheckbox,
   SfLink,
+  SfLoaderLinear,
 } from "@storefront-ui/react";
+import type { FormEvent } from "react";
 import { useId, useMemo, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useMutation } from "react-query";
 import { CSSTransition } from "react-transition-group";
+import AlertError from "~/components/AlertError";
 import { useTheme } from "~/context/theme";
 
 export const RegisterModal: React.FC = () => {
+  const { ENV } = useRouteLoaderData("root") as any;
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+      confirm_password: "",
+    },
+  });
+
   const { authModal, closeModal, showLogin } = useTheme();
   const headingId = useId();
   const descriptionId = useId();
   const modalRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const revalidator = useRevalidator();
+
   const isOpen = useMemo(() => {
     return authModal === "register";
   }, [authModal]);
+
+  const mutation = useMutation(async (formData: FormData) => {
+    const response = await fetch(ENV.SITE_URL + "/register", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    if (data.success) {
+      revalidator.revalidate();
+      closeModal();
+      toast.success("Đăng ký thành công");
+    }
+    return data;
+  });
+
+  const onSubmit = async (data) => {
+    console.log("data", data);
+    const form = new FormData();
+    Object.entries(data).map(([key, value]) => {
+      form.append(key, value as any);
+    });
+    mutation.mutate(form);
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -63,7 +118,7 @@ export const RegisterModal: React.FC = () => {
           role="alertdialog"
           aria-labelledby={headingId}
           aria-describedby={descriptionId}
-          className="z-50  max-w-[90%] md:max-w-lg"
+          className="z-50 min-w-[320px] max-w-[320px] md:min-w-[420px] md:max-w-[420px]"
         >
           <header>
             <SfButton
@@ -81,24 +136,61 @@ export const RegisterModal: React.FC = () => {
               Đăng ký
             </h3>
           </header>
-          <div className="min-w-[320px] py-5">
-            <Form className="space-y-4" action="/register" method="POST">
+          <div className="w-full py-5">
+            {JSON.stringify(errors)}
+            <Form
+              className="space-y-4"
+              reloadDocument
+              method="POST"
+              action="/register"
+            >
+              {mutation.data?.error && (
+                <AlertError className="mb-2" message={mutation.data.error} />
+              )}
               <label className="mt-4 flex w-full flex-grow flex-col gap-0.5 md:mt-0 md:w-auto">
                 <span className="mb-1 sf-text-sm">Email</span>
-                <SfInput
+                <Controller
                   name="email"
-                  type={"email"}
-                  autoComplete="email"
-                  required
+                  control={control}
+                  rules={{ required: "Vui lòng nhập mật khẩu" }}
+                  render={({ field }) => (
+                    <>
+                      <SfInput
+                        type={"email"}
+                        invalid={!!errors.email}
+                        {...register("email")}
+                      />
+                      {errors.email?.message && (
+                        <p className="mt-0.5 text-sm font-medium text-negative-700">
+                          {errors.email?.message &&
+                            errors.email.message.toString()}
+                        </p>
+                      )}
+                    </>
+                  )}
                 />
               </label>
               <label className="mt-4 flex w-full flex-grow flex-col gap-0.5 md:mt-0 md:w-auto">
                 <span className="mb-1 sf-text-sm">Mật khẩu</span>
-                <SfInput
+                <Controller
                   name="password"
-                  type={"password"}
-                  autoComplete="password"
-                  required
+                  control={control}
+                  rules={{ required: "Vui lòng nhập mật khẩu" }}
+                  render={({ field }) => (
+                    <>
+                      <SfInput
+                        type={"password"}
+                        invalid={!!errors.password}
+                        {...field}
+                      />
+                      {errors.password?.message && (
+                        <p className="mt-0.5 text-sm font-medium text-negative-700">
+                          {errors.password?.message &&
+                            errors.password.message.toString()}
+                        </p>
+                      )}
+                    </>
+                  )}
                 />
               </label>
               <input
@@ -108,14 +200,49 @@ export const RegisterModal: React.FC = () => {
               />
               <label className="mt-4 flex w-full flex-grow flex-col gap-0.5 md:mt-0 md:w-auto">
                 <span className="mb-1 sf-text-sm">Nhập lại mật khẩu</span>
-                <SfInput name="confirm_password" type={"password"} required />
+                <Controller
+                  name="confirm_password"
+                  control={control}
+                  rules={{ required: "Vui lòng nhập lại mật khẩu" }}
+                  render={({ field }) => (
+                    <>
+                      <SfInput
+                        type={"password"}
+                        invalid={!!errors.confirm_password}
+                        {...field}
+                      />
+                      {errors.confirm_password?.message && (
+                        <p className="mt-0.5 text-sm font-medium text-negative-700">
+                          {errors.confirm_password?.message &&
+                            errors.confirm_password.message.toString()}
+                        </p>
+                      )}
+                    </>
+                  )}
+                />
+                {/* <SfInput name="confirm_password" type={"password"} required /> */}
               </label>
               <div className="flex justify-end">
                 <SfLink as={Link} to={"/forgot-password"} className="text-sm">
                   Quên mật khẩu
                 </SfLink>
               </div>
-              <SfButton type="submit" variant="primary" className="w-full">
+              <SfButton
+                type="submit"
+                variant="primary"
+                className="relative w-full"
+
+                // onClick={handleSubmit(onSubmit)}
+              >
+                {mutation.isLoading && (
+                  <div className="absolute left-0 h-full w-full">
+                    <SfLoaderLinear
+                      ariaLabel="loading"
+                      className="h-full w-full bg-transparent text-primary-400 opacity-40"
+                      size="lg"
+                    />
+                  </div>
+                )}
                 Đăng ký
               </SfButton>
               <div className="text-sm font-medium text-neutral-500">

@@ -1,5 +1,6 @@
 import {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useMemo,
@@ -41,15 +42,21 @@ export const ThemeProvider = (props: any) => {
   const [state, dispatch] = useReducer(themeReducer, initialState);
 
   const showLogin = useCallback(() => {
-    dispatch({ type: ActionType.UPDATE_AUTH_MODAL, payload: "login" });
+    startTransition(() => {
+      dispatch({ type: ActionType.UPDATE_AUTH_MODAL, payload: "login" });
+    });
   }, []);
 
   const showRegister = useCallback(() => {
-    dispatch({ type: ActionType.UPDATE_AUTH_MODAL, payload: "register" });
+    startTransition(() => {
+      dispatch({ type: ActionType.UPDATE_AUTH_MODAL, payload: "register" });
+    });
   }, []);
 
   const closeModal = useCallback(() => {
-    dispatch({ type: ActionType.UPDATE_AUTH_MODAL, payload: null });
+    startTransition(() => {
+      dispatch({ type: ActionType.UPDATE_AUTH_MODAL, payload: null });
+    });
   }, []);
 
   const value = useMemo(() => {

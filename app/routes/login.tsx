@@ -2,7 +2,11 @@ import type { ActionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import jwt from "jsonwebtoken";
 
-import { createUserSession } from "~/session.server";
+import {
+  createUserSession,
+  getCommitUserSessionHeader,
+  getSession,
+} from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 // export async function loader({ request }: LoaderArgs) {
@@ -46,7 +50,7 @@ export async function action({ request }: ActionArgs) {
   if (!token) {
     return json(
       {
-        error: "email/password không đúng",
+        error: "Email hoặc Password không chính xác",
       },
       { status: 400 }
     );
@@ -56,17 +60,22 @@ export async function action({ request }: ActionArgs) {
   if (!decoded?.data?.user?.id) {
     return json(
       {
-        error: "email/password không đúng",
+        error: "Đăng nhập thất bại. Vui lòng thử lại sau",
       },
       { status: 400 }
     );
   }
   const userId = decoded?.data?.user?.id;
 
-  return createUserSession({
-    request,
-    userId: userId,
-    remember: true,
-    redirectTo,
-  });
+  return json(
+    {
+      error: "",
+      success: true,
+    },
+    {
+      headers: {
+        ...(await getCommitUserSessionHeader({ request, userId })),
+      },
+    }
+  );
 }

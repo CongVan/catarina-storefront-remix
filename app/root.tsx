@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "~/context/theme";
 
@@ -85,15 +86,17 @@ export default function App() {
           <Links />
         </head>
         <body>
-          <ThemeProvider>
-            <Layout />
-          </ThemeProvider>
-          <ScrollRestoration />
           <script
             dangerouslySetInnerHTML={{
               __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
             }}
           />
+          <ThemeProvider>
+            <Layout />
+          </ThemeProvider>
+          <ScrollRestoration />
+
+          <Toaster toastOptions={{ duration: 3000 }} />
           <Scripts />
           <LiveReload />
         </body>

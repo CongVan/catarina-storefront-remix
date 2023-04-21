@@ -33,7 +33,6 @@ export async function getUserId(
 }
 
 export async function getUser(request: Request) {
-
   const userId = await getUserId(request);
   if (userId === undefined) return null;
 
@@ -63,7 +62,21 @@ export async function requireUser(request: Request) {
 
   throw await logout(request);
 }
-
+export async function getCommitUserSessionHeader({
+  request,
+  userId,
+}: {
+  request: Request;
+  userId: string;
+}) {
+  const session = await getSession(request);
+  session.set(USER_SESSION_KEY, userId);
+  return {
+    "Set-Cookie": await sessionStorage.commitSession(session, {
+      maxAge: 60 * 60 * 24 * 7,
+    }),
+  };
+}
 export async function createUserSession({
   request,
   userId,

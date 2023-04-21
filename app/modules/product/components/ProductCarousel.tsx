@@ -32,7 +32,7 @@ export const ProductCarousel: React.FC<{
           {products.map((p) => (
             <div
               key={p.id}
-              className="mr-0 min-w-0 flex-shrink-0 flex-grow-0 basis-full md:basis-4/12 md:pr-4 xl:basis-3/12"
+              className="mr-0 min-w-0 flex-shrink-0 flex-grow-0 basis-full md:basis-4/12 md:pr-4 lg:basis-1/4 xl:basis-1/5"
             >
               <ProductCard {...p} className="h-full" />
             </div>

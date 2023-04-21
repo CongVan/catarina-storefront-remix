@@ -3,7 +3,11 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
 
-import { createUserSession, getUserId } from "~/session.server";
+import {
+  createUserSession,
+  getCommitUserSessionHeader,
+  getUserId,
+} from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { $fetch } from "~/utils/api";
@@ -24,7 +28,12 @@ export async function action({ request }: ActionArgs) {
   console.log("password", password);
 
   if (!process.env.WOO_API) {
-    return new Response("Woo API set net", { status: 500 });
+    return json(
+      {
+        error: "Woo API not seted",
+      },
+      { status: 500 }
+    );
   }
 
   const headers = new Headers({
@@ -33,23 +42,33 @@ export async function action({ request }: ActionArgs) {
       `${process.env.WOO_KEY}:${process.env.WOO_SECRET}`
     ).toString("base64")}`,
   });
+  try {
+    const response = await fetch(process.env.WOO_API + "/customers", {
+      body: formData,
+      method: "POST",
+      headers: headers,
+    });
+    const data = (await response.json()) as any;
+    console.log("data", data);
 
-  const response = await fetch(process.env.WOO_API + "/customers", {
-    body: formData,
-    method: "POST",
-    headers: headers,
-  });
-  const user = (await response.json()) as any;
-  console.log("user", user);
+    if (!data.id) {
+      if (data.code === "registration-error-email-exists")
+        return json({ error: "Email đã được đăng ký" }, { status: 400 });
+      return json({ error: data.code }, { status: 400 });
+    }
 
-  if (!user.id) {
-    return json({ ...user }, { status: 400 });
+    return json(
+      {
+        error: "",
+        success: true,
+      },
+      {
+        headers: {
+          ...(await getCommitUserSessionHeader({ request, userId: data.id })),
+        },
+      }
+    );
+  } catch (error: any) {
+    return json({ error: error?.message }, { status: 400 });
   }
-
-  return createUserSession({
-    request,
-    userId: user.id,
-    remember: true,
-    redirectTo,
-  });
 }

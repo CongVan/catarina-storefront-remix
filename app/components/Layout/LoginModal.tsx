@@ -1,26 +1,62 @@
-import { Form, Link, useLocation } from "@remix-run/react";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useRevalidator,
+  useRouteLoaderData,
+} from "@remix-run/react";
 import {
   SfButton,
   SfCheckbox,
   SfIconClose,
   SfInput,
   SfLink,
+  SfLoaderLinear,
   SfModal,
 } from "@storefront-ui/react";
+import type { FormEvent } from "react";
 import { useId, useMemo, useRef } from "react";
+import { toast } from "react-hot-toast";
+import { useMutation } from "react-query";
 import { CSSTransition } from "react-transition-group";
+import AlertError from "~/components/AlertError";
 import { useTheme } from "~/context/theme";
 
 export const LoginModal: React.FC = () => {
+  const { ENV } = useRouteLoaderData("root") as any;
   const { authModal, closeModal, showRegister } = useTheme();
+  const navigate = useNavigate();
+
   const headingId = useId();
   const descriptionId = useId();
   const modalRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  const mutation = useMutation(async (formData: FormData) => {
+    const response = await fetch(ENV.SITE_URL + "/login", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    if (data.success) {
+      closeModal();
+      toast.success("Đăng nhập thành công");
+      navigate(location.pathname);
+    }
+    return data;
+  });
+
   const isOpen = useMemo(() => {
     return authModal === "login";
   }, [authModal]);
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    mutation.mutate(form);
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -63,7 +99,7 @@ export const LoginModal: React.FC = () => {
           role="alertdialog"
           aria-labelledby={headingId}
           aria-describedby={descriptionId}
-          className="z-50  max-w-[90%] md:max-w-lg"
+          className="z-50 min-w-[320px] max-w-lg md:min-w-[420px]"
         >
           <header>
             <SfButton
@@ -81,12 +117,15 @@ export const LoginModal: React.FC = () => {
               Đăng nhập
             </h3>
           </header>
-          <div className="min-w-[320px] py-5">
-            <Form
+          <div className="w-full py-5">
+            {mutation.data?.error && (
+              <AlertError className="mb-2" message={mutation.data.error} />
+            )}
+            <form
               className="space-y-4"
-              action="/login"
-              method="POST"
-              reloadDocument
+              // action="/login"
+              // method="POST"
+              onSubmit={(e) => onSubmit(e)}
             >
               <label className="mt-4 flex w-full flex-grow flex-col gap-0.5 md:mt-0 md:w-auto">
                 <span className="mb-1 sf-text-sm">Email</span>
@@ -94,6 +133,7 @@ export const LoginModal: React.FC = () => {
                   name="email"
                   type={"email"}
                   autoComplete="email"
+                  className="w-full"
                   required
                 />
               </label>
@@ -120,14 +160,29 @@ export const LoginModal: React.FC = () => {
                     htmlFor="remember"
                     className="ml-2 text-sm font-medium text-neutral-500"
                   >
-                    Ghi nhớ đăng nhập
+                    Ghi nhớ{" "}
+                    <span className="hidden md:inline-flex">đăng nhập</span>
                   </label>
                 </div>
                 <SfLink as={Link} to={"/forgot-password"} className="text-sm">
                   Quên mật khẩu
                 </SfLink>
               </div>
-              <SfButton type="submit" variant="primary" className="w-full">
+              <SfButton
+                disabled={mutation.isLoading}
+                type="submit"
+                variant="primary"
+                className="relative w-full"
+              >
+                {mutation.isLoading && (
+                  <div className="absolute left-0 h-full w-full">
+                    <SfLoaderLinear
+                      ariaLabel="loading"
+                      className="h-full w-full bg-transparent text-primary-400 opacity-40"
+                      size="lg"
+                    />
+                  </div>
+                )}
                 Đăng nhập
               </SfButton>
               <div className="text-sm font-medium text-neutral-500">
@@ -136,7 +191,7 @@ export const LoginModal: React.FC = () => {
                   Đăng ký ngay
                 </SfLink>
               </div>
-            </Form>
+            </form>
           </div>
         </SfModal>
       </CSSTransition>
