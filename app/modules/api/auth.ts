@@ -8,8 +8,6 @@ export class AuthAPI extends BaseAPI<Customer> {
   }
 
   async login({ username, password }) {
-    console.log("BASE_API_URL", BASE_API_URL);
-
     const { data } = await this.client({
       baseURL: BASE_API_URL + "/api/wp-json/jwt-auth/v1",
       url: "/token",

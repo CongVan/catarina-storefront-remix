@@ -2,7 +2,7 @@ import { Await, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import { useQuery } from "react-query";
 import { NextButton, PrevButton } from "~/components/Carousel/NavButton";
-import { useCarousel } from "~/components/hooks/use-carousel";
+import { useCarousel } from "~/hooks/use-carousel";
 import { ProductCarouselSkeleton } from "~/modules/home/templates/ProductCarouselSkeleton";
 import ProductCard from "~/modules/product/components/ProductCard";
 import type { loader } from "~/routes/$";

@@ -6,8 +6,9 @@ import {
   SfIconShoppingCart,
   SfInput,
 } from "@storefront-ui/react";
-import { IconSearch } from "@tabler/icons-react";
+import { IconHeart, IconSearch } from "@tabler/icons-react";
 import classNames from "classnames";
+import { CartDrawer } from "~/components/Cart/CartDrawer";
 import LoginButton from "~/components/Layout/LoginButton";
 import { SearchBox } from "~/components/Layout/SearchBox";
 import { UserDropdown } from "~/components/Layout/UserDropdown";
@@ -45,18 +46,16 @@ export default function TopNav() {
             <SearchBox />
           </div>
           <nav className="ml-auto flex flex-row flex-nowrap">
-            {actionItems.map((actionItem) => (
-              <SfButton
-                className={classNames(
-                  "-ml-0.5 mr-2 text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700"
-                )}
-                key={actionItem.ariaLabel}
-                aria-label={actionItem.ariaLabel}
-                variant="tertiary"
-                slotPrefix={actionItem.icon}
-                square
-              />
-            ))}
+            <CartDrawer />
+            <SfButton
+              className={classNames(
+                "-ml-0.5 mr-2 text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700"
+              )}
+              aria-label={"Yêu thích"}
+              variant="tertiary"
+              slotPrefix={<IconHeart />}
+              square
+            />
             {user ? <UserDropdown /> : <LoginButton />}
           </nav>
         </div>

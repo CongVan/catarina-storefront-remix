@@ -1,6 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { NextButton, PrevButton } from "~/components/Carousel/NavButton";
-import { useCarousel } from "~/components/hooks/use-carousel";
+import { useCarousel } from "~/hooks/use-carousel";
 import type { Product } from "~/types/product";
 import type { Category } from "~/types/product-category";
 import chunk from "lodash/chunk";

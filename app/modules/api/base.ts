@@ -4,24 +4,25 @@ import type { WooResponse } from "~/types/common";
 import { getClient } from "~/utils/api";
 
 export class BaseAPI<T> {
-  protected baseURL: string = "";
+  protected baseURL: string;
+  protected suffixURL: string;
   protected client: AxiosInstance;
 
-  constructor({ baseURL }) {
+  constructor({ baseURL, suffixURL = "" }) {
     this.baseURL = baseURL;
+    this.suffixURL = suffixURL;
     this.client = getClient();
   }
 
   resource(url?: string) {
-    return [this.baseURL, url].join("/");
+    return [this.baseURL, url, this.suffixURL].join("/");
   }
 
-  async list(config?: AxiosRequestConfig) {
+  async list(config?: AxiosRequestConfig & { id?: any }) {
     const { data, headers } = await this.client.get<T[]>(
-      this.resource(),
+      this.resource(config?.id || ""),
       config
     );
-    console.log("headers", headers);
 
     const total = +(headers["x-wp-total"] + "");
     const totalPage = +(headers["x-wp-totalpages"] + "");
@@ -31,7 +32,6 @@ export class BaseAPI<T> {
       totalPage,
       ...(config?.params?.page && { page: config?.params?.page }),
     } as WooResponse<T>["meta"];
-    console.log("meta", meta);
 
     return {
       data,

@@ -14,7 +14,6 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  console.log("register action", email, password);
 
   try {
     const { data, error } = await CommerceAPI.customers.create({
@@ -22,7 +21,7 @@ export async function action({ request }: ActionArgs) {
       username: email,
       password,
     });
-    console.log("data", data);
+
     if (error || !data?.id) {
       if (error?.code === "registration-error-email-exists")
         return json({ error: "Email đã được đăng ký" }, { status: 400 });

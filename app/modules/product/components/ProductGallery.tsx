@@ -1,5 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
-import { useCarousel } from "~/components/hooks/use-carousel";
+import { useCarousel } from "~/hooks/use-carousel";
 import type { loader } from "~/routes/$";
 
 export const ProductGallery: React.FC = () => {

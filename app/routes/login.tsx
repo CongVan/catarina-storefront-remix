@@ -10,13 +10,12 @@ export async function action({ request }: ActionArgs) {
   const email = formData.get("email");
   const password = formData.get("password");
 
-  const { data: dataToken } = await axios.post(
-    process.env.WOO_HOST + "/wp-json/jwt-auth/v1/token",
-    {
+  const { data: dataToken } = await axios
+    .post(process.env.WOO_HOST + "/wp-json/jwt-auth/v1/token", {
       username: email,
       password: password,
-    }
-  );
+    })
+    .catch((e) => e.response);
 
   const token = dataToken.token;
   if (!token) {

@@ -1,10 +1,9 @@
-import { Link, useLoaderData } from "@remix-run/react";
 import { defer } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { SfLink } from "@storefront-ui/react";
-import { ProductList } from "~/modules/category/template/ProductList";
-import type { Product } from "~/types/product";
 import { CommerceAPI } from "~/modules/api/commerce";
+import { ProductList } from "~/modules/category/template/ProductList";
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const url = new URL(request.url);

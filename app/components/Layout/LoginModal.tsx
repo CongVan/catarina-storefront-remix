@@ -38,7 +38,6 @@ export const LoginModal: React.FC = () => {
 
   const mutation = useMutation(async (formData: FormData) => {
     const pathname = ENV.SITE_URL + "/login";
-    console.log("path", pathname);
 
     const response = await fetch(pathname, {
       method: "POST",

@@ -13,14 +13,17 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "~/context/theme";
 import { CommerceAPI } from "~/modules/api/commerce";
 
-import stylesheet from "~/styles/tailwind.css";
+import tailwind from "~/styles/tailwind.css";
+import globalStyle from "~/styles/index.css";
 import type { Customer } from "~/types/user";
 import { Layout } from "./components/Layout";
 import { getUserId } from "./session.server";
+import { CartProvider } from "~/components/Cart/CartProvider";
 
 export const links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: stylesheet },
+    { rel: "stylesheet", href: tailwind },
+    { rel: "stylesheet", href: globalStyle },
     {
       rel: "preconnect",
       href: "https://fonts.gstatic.com",
@@ -93,11 +96,18 @@ export default function App() {
             }}
           />
           <ThemeProvider>
-            <Layout />
+            <CartProvider customer={data.user as Customer}>
+              <Layout />
+            </CartProvider>
           </ThemeProvider>
           <ScrollRestoration />
 
-          <Toaster toastOptions={{ duration: 3000 }} />
+          <Toaster
+            toastOptions={{
+              duration: 3000,
+              className: "font-semibold leading-relaxed tracking-wide",
+            }}
+          />
           <Scripts />
           <LiveReload />
         </body>

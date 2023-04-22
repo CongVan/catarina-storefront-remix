@@ -60,7 +60,6 @@ export const RegisterModal: React.FC = () => {
       body: formData,
     });
     const data = await response.json();
-    console.log("response ", data);
 
     if (data.success) {
       revalidator.revalidate();
@@ -70,7 +69,6 @@ export const RegisterModal: React.FC = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("data", data);
     const form = new FormData();
     Object.entries(data).map(([key, value]) => {
       form.append(key, value as any);

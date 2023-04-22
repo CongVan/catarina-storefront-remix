@@ -20,6 +20,13 @@ export const loader = async ({ params }: LoaderArgs) => {
     throw new Error("error2: not found product");
   }
 
+  const promiseVariants = CommerceAPI.productVariants.list({
+    id: product.id,
+    params: {
+      include: product.variations,
+    },
+  });
+
   const promiseRelated = CommerceAPI.products.list({
     params: {
       include: product.related_ids,
@@ -27,6 +34,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   });
 
   return defer({
+    promiseVariants,
     product: product,
     promiseRelated,
   });
