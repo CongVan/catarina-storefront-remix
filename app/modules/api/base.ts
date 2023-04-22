@@ -21,13 +21,18 @@ export class BaseAPI<T> {
       this.resource(),
       config
     );
-    const total = +(headers["X-WP-Total"] + "");
-    const totalPage = +(headers["X-WP-TotalPages"] + "");
+    console.log("headers", headers);
+
+    const total = +(headers["x-wp-total"] + "");
+    const totalPage = +(headers["x-wp-totalpages"] + "");
+
     const meta = {
       total,
       totalPage,
       ...(config?.params?.page && { page: config?.params?.page }),
     } as WooResponse<T>["meta"];
+    console.log("meta", meta);
+
     return {
       data,
       meta,
@@ -42,11 +47,11 @@ export class BaseAPI<T> {
     return { data };
   }
 
-  async update(id, config?: AxiosRequestConfig) {
+  async update(id, body, config?: AxiosRequestConfig) {
     if (!id) {
       throw new AxiosError("id is require");
     }
-    const { data } = await this.client.put<T>(this.resource(id), config);
+    const { data } = await this.client.put<T>(this.resource(id), body, config);
     return { data };
   }
 

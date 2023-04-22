@@ -84,13 +84,11 @@ app.use(
   createProxyMiddleware({
     target: process.env.WOO_HOST,
     pathRewrite: { "^/api": "" },
-    onProxyReq: (proxyReq, req) => {
-      proxyReq.setHeader(
-        "Authorization",
-        `Basic ${Buffer.from(
-          `${process.env.WOO_KEY}:${process.env.WOO_SECRET}`
-        ).toString("base64")}`
-      );
+    headers: {
+      Authorization: `Basic ${Buffer.from(
+        `${process.env.WOO_KEY}:${process.env.WOO_SECRET}`
+      ).toString("base64")}`,
+      "access-control-expose-headers": "X-WP-Total, X-WP-TotalPages, Link",
     },
     changeOrigin: true,
   })

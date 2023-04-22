@@ -1,5 +1,5 @@
 import { useRouteLoaderData } from "@remix-run/react";
-import { SfButton, SfIconFavorite } from "@storefront-ui/react";
+import { SfButton, SfIconFavorite, SfTooltip } from "@storefront-ui/react";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -16,9 +16,7 @@ export const AddToWishListButton: React.FC<{
   const { showLogin } = useTheme();
   const { user } = useRouteLoaderData("root") as RootLoaderData;
   const mutation = useMutation(async (body: any) => {
-    const data = await CommerceAPI.customers.update(user?.id, {
-      data: body,
-    });
+    const data = await CommerceAPI.customers.update(user?.id, body);
 
     if (data) {
       toast.success("Đã thêm vào danh sách yêu thích");
@@ -29,7 +27,7 @@ export const AddToWishListButton: React.FC<{
   const [favorite, setFavorite] = useState(() => {
     if (user) {
       return !!user.meta_data?.find(
-        (m) => m.key === "favorite" && m.value === productId + ""
+        (m) => m.key === "favorite-" + productId && m.value === productId + ""
       );
     }
     return false;
@@ -37,7 +35,7 @@ export const AddToWishListButton: React.FC<{
 
   const add = () => {
     if (favorite) {
-      return toast.success("Đã thêm vào danh sách yêu thích");
+      return toast.success("Sản phẩm đã được thêm vào danh sách yêu thích");
     }
     if (!user) {
       toast("Vui lòng đăng nhập để sử dụng tính năng này");
@@ -66,14 +64,21 @@ export const AddToWishListButton: React.FC<{
         "group !rounded-full border border-neutral-200 bg-white",
         className
       )}
-      aria-label="Add to wishlist"
+      aria-label="Thêm vào yêu thích"
       onClick={() => add()}
     >
-      {favorite ? (
-        <IconHeartFilled className="h-5 w-5  text-primary-600 " />
-      ) : (
-        <IconHeart className="h-5 w-5" />
-      )}
+      <SfTooltip
+        label={favorite ? "Đã được yêu thích" : "Thêm vào yêu thích"}
+        showArrow
+        placement="bottom"
+        strategy="absolute"
+      >
+        {favorite ? (
+          <IconHeartFilled className="h-5 w-5  text-primary-600 " />
+        ) : (
+          <IconHeart className="h-5 w-5" />
+        )}
+      </SfTooltip>
     </SfButton>
   );
 };

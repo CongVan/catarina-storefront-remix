@@ -5,6 +5,7 @@ import {
   SfIconFavorite,
   SfLink,
   SfRating,
+  SfTooltip,
 } from "@storefront-ui/react";
 import { twMerge } from "tailwind-merge";
 import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
@@ -40,6 +41,7 @@ export default function ProductCard({
             className="mx-auto aspect-square h-auto w-[120px] max-w-[160px] rounded-md object-cover md:w-full"
           />
         </Link>
+
         <AddToWishListButton
           productId={id}
           className="absolute bottom-0 right-0 mb-2 mr-2"
