@@ -15,7 +15,7 @@ import {
   SfLink,
   SfLoaderLinear,
 } from "@storefront-ui/react";
-import type { FormEvent } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useId, useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -46,8 +46,9 @@ export const RegisterModal: React.FC = () => {
   const modalRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const navigate = useNavigate();
+
   const revalidator = useRevalidator();
+  const [success, setSuccess] = useState(false);
 
   const isOpen = useMemo(() => {
     return authModal === "register";
@@ -59,10 +60,11 @@ export const RegisterModal: React.FC = () => {
       body: formData,
     });
     const data = await response.json();
+    console.log("response ", data);
+
     if (data.success) {
       revalidator.revalidate();
-      closeModal();
-      toast.success("Đăng ký thành công");
+      setSuccess(true);
     }
     return data;
   });
@@ -75,6 +77,13 @@ export const RegisterModal: React.FC = () => {
     });
     mutation.mutate(form);
   };
+
+  useEffect(() => {
+    if (success && revalidator.state === "idle") {
+      closeModal();
+      toast.success("Đăng ký thành công");
+    }
+  }, [success, revalidator.state, closeModal]);
 
   return (
     <>
@@ -137,15 +146,12 @@ export const RegisterModal: React.FC = () => {
             </h3>
           </header>
           <div className="w-full py-5">
-            {JSON.stringify(errors)}
-            <Form
-              className="space-y-4"
-              reloadDocument
-              method="POST"
-              action="/register"
-            >
-              {mutation.data?.error && (
-                <AlertError className="mb-2" message={mutation.data.error} />
+            <form className="space-y-4">
+              {!!mutation?.data?.error && (
+                <AlertError
+                  className="mb-2"
+                  message={mutation.data.error + ""}
+                />
               )}
               <label className="mt-4 flex w-full flex-grow flex-col gap-0.5 md:mt-0 md:w-auto">
                 <span className="mb-1 sf-text-sm">Email</span>
@@ -228,13 +234,13 @@ export const RegisterModal: React.FC = () => {
                 </SfLink>
               </div>
               <SfButton
-                type="submit"
+                type="button"
                 variant="primary"
-                className="relative w-full"
-
-                // onClick={handleSubmit(onSubmit)}
+                className="relative w-full overflow-hidden"
+                disabled={mutation.isLoading || revalidator.state === "loading"}
+                onClick={handleSubmit(onSubmit)}
               >
-                {mutation.isLoading && (
+                {(mutation.isLoading || revalidator.state === "loading") && (
                   <div className="absolute left-0 h-full w-full">
                     <SfLoaderLinear
                       ariaLabel="loading"
@@ -251,7 +257,7 @@ export const RegisterModal: React.FC = () => {
                   Đăng nhập
                 </SfLink>
               </div>
-            </Form>
+            </form>
           </div>
         </SfModal>
       </CSSTransition>

@@ -7,6 +7,7 @@ import {
   SfRating,
 } from "@storefront-ui/react";
 import { twMerge } from "tailwind-merge";
+import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
 import type { Product } from "~/types/product";
 import { getBrand } from "~/utils/helper";
 
@@ -39,16 +40,10 @@ export default function ProductCard({
             className="mx-auto aspect-square h-auto w-[120px] max-w-[160px] rounded-md object-cover md:w-full"
           />
         </Link>
-        <SfButton
-          type="button"
-          variant="tertiary"
-          size="sm"
-          square
-          className="absolute bottom-0 right-0 mb-2 mr-2 !rounded-full border border-neutral-200 bg-white"
-          aria-label="Add to wishlist"
-        >
-          <SfIconFavorite size="sm" />
-        </SfButton>
+        <AddToWishListButton
+          productId={id}
+          className="absolute bottom-0 right-0 mb-2 mr-2"
+        />
       </div>
       <div className="flex flex-1 flex-col border-t border-neutral-200 p-4">
         <SfLink

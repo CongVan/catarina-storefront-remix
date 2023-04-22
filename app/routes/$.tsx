@@ -1,42 +1,33 @@
 import type { LoaderArgs } from "@remix-run/node";
-import { defer, LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { defer } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { SfLink } from "@storefront-ui/react";
-import { ProductGallery } from "~/modules/product/components/ProductGallery";
 import ProductDetails from "~/modules/product/components/ProductDetails";
+import { ProductGallery } from "~/modules/product/components/ProductGallery";
 
-import type { Product } from "~/types/product";
-import { $fetch } from "~/utils/api";
+import { CommerceAPI } from "~/modules/api/commerce";
 import { ProductInfo } from "~/modules/product/components/ProductInfo";
 import { ProductRelated } from "~/modules/product/components/ProductRelated";
-// import { LoaderFunction } from "react-router"
-const fetchRelated = (params: any) => {
-  return $fetch<Product[]>("/products", {
-    params: params,
-  });
-};
-export const loader = async ({ params }: LoaderArgs) => {
-  console.log("params", params);
 
+export const loader = async ({ params }: LoaderArgs) => {
   const id = params["*"]?.substring(params["*"].lastIndexOf("-") + 1);
 
   if (!id) {
     throw new Error("error1: not found product ");
   }
-  const { data } = await $fetch<Product>("/products/" + id);
-  if (!data) {
+  const { data: product } = await CommerceAPI.products.detail(id);
+  if (!product) {
     throw new Error("error2: not found product");
   }
-  console.log(" data.related_ids", data.related_ids);
 
-  const promiseRelated = fetchRelated({
-    include: data.related_ids,
-    per_page: 24,
-    page: 1,
+  const promiseRelated = CommerceAPI.products.list({
+    params: {
+      include: product.related_ids,
+    },
   });
+
   return defer({
-    product: data,
+    product: product,
     promiseRelated,
   });
 };

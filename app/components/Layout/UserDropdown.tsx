@@ -2,11 +2,11 @@ import { Form, useRouteLoaderData } from "@remix-run/react";
 import { SfButton, useDropdown } from "@storefront-ui/react";
 import { IconUser } from "@tabler/icons-react";
 import React from "react";
-import type { User } from "~/types/user";
+import type { Customer } from "~/types/user";
 
 export function UserDropdown() {
   const root = useRouteLoaderData("root") as any;
-  const user = root.user as User;
+  const user = root.user as Customer;
   const ENV = root.ENV;
   const [isOpen, setOpen] = React.useState(false);
 

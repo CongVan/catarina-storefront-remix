@@ -1,17 +1,8 @@
-import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import * as React from "react";
 
-import {
-  createUserSession,
-  getCommitUserSessionHeader,
-  getUserId,
-} from "~/session.server";
-import { verifyLogin } from "~/models/user.server";
-import { safeRedirect, validateEmail } from "~/utils";
-import { $fetch } from "~/utils/api";
-import type { User } from "~/types/user";
+import { CommerceAPI } from "~/modules/api/commerce";
+import { getCommitUserSessionHeader, getUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -23,38 +14,19 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
-  console.log("username", email);
-  console.log("password", password);
+  console.log("register action", email, password);
 
-  if (!process.env.WOO_API) {
-    return json(
-      {
-        error: "Woo API not seted",
-      },
-      { status: 500 }
-    );
-  }
-
-  const headers = new Headers({
-    ...request.headers,
-    Authorization: `Basic ${Buffer.from(
-      `${process.env.WOO_KEY}:${process.env.WOO_SECRET}`
-    ).toString("base64")}`,
-  });
   try {
-    const response = await fetch(process.env.WOO_API + "/customers", {
-      body: formData,
-      method: "POST",
-      headers: headers,
+    const { data, error } = await CommerceAPI.customers.create({
+      email,
+      username: email,
+      password,
     });
-    const data = (await response.json()) as any;
     console.log("data", data);
-
-    if (!data.id) {
-      if (data.code === "registration-error-email-exists")
+    if (error || !data?.id) {
+      if (error?.code === "registration-error-email-exists")
         return json({ error: "Email đã được đăng ký" }, { status: 400 });
-      return json({ error: data.code }, { status: 400 });
+      return json({ error: error.message }, { status: 400 });
     }
 
     return json(

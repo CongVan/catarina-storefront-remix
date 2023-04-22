@@ -4,24 +4,15 @@ import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { SfLink } from "@storefront-ui/react";
 import isEmpty from "lodash/isEmpty";
+import { CommerceAPI } from "~/modules/api/commerce";
 import { ProductList } from "~/modules/category/template/ProductList";
 import type { WooResponse } from "~/types/common";
 import type { Product } from "~/types/product";
-import type { Category } from "~/types/product-category";
-import { $fetch } from "~/utils/api";
-
-export const fetchProducts = async (params: any) => {
-  return await $fetch<Product[]>("/products", {
-    params,
-  });
-};
 
 export async function loader({ params }: LoaderArgs) {
   const id = params.slug?.substring(params.slug.lastIndexOf("-") + 1);
 
-  const { data: category } = await $fetch<Category>(
-    "/products/categories/" + id
-  );
+  const { data: category } = await CommerceAPI.productCategories.detail(id);
 
   if (isEmpty(category)) {
     throw new Error("Not found category");
@@ -32,7 +23,7 @@ export async function loader({ params }: LoaderArgs) {
     per_page: 24,
     page: 1,
   };
-  const promise = fetchProducts(query);
+  const promise = CommerceAPI.products.list({ params: query });
 
   return defer({ category: category, promise, query });
 }

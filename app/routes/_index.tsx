@@ -2,52 +2,46 @@ import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
+import { CommerceAPI } from "~/modules/api/commerce";
 
 import { CategoryProductCarousel } from "~/modules/home/templates/CategoryProductCarousel";
 import { ProductCarouselSkeleton } from "~/modules/home/templates/ProductCarouselSkeleton";
 import { ProductCarousel } from "~/modules/product/components/ProductCarousel";
 
 import type { Product } from "~/types/product";
-import type { Category } from "~/types/product-category";
-import { $fetch } from "~/utils/api";
 
-const fetchLatest = () =>
-  $fetch<Product[]>("/products", {
+export const loader = async (a: LoaderArgs) => {
+  const { data: categories } = await CommerceAPI.productCategories.list({
+    params: {
+      orderby: "count",
+      hide_empty: true,
+    },
+  });
+
+  const promiseLatest = CommerceAPI.products.list({
     params: { page: "1", per_page: "10", orderby: "date", order: "desc" },
   });
 
-const fetchPopular = () =>
-  $fetch<Product[]>("/products", {
+  const promisePopular = CommerceAPI.products.list({
     params: {
-      page: "1",
-      per_page: "10",
+      page: 1,
+      per_page: 10,
       orderby: "popularity",
       order: "desc",
     },
   });
 
-export const loader = async (a: LoaderArgs) => {
-  const { data: categories } = await $fetch<Category[]>(
-    "/products/categories",
-    {
-      params: { orderby: "count", hide_empty: true },
-    }
-  );
-  const promiseLatest = fetchLatest();
-
-  const promisePopular = fetchPopular();
-
   const categoriesPromises = Promise.all(
     categories.map(async (cate) => {
-      const { data } = await $fetch<Product[]>("/products", {
+      const { data: products } = await CommerceAPI.products.list({
         params: {
-          category: cate.id + "",
+          category: cate.id,
           per_page: 45 + "",
         },
       });
       return {
         category: cate,
-        data: data,
+        data: products,
       };
     })
   );

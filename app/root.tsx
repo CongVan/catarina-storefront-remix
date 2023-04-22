@@ -1,6 +1,5 @@
 import type { LinksFunction, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { defer } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -12,13 +11,12 @@ import {
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "~/context/theme";
+import { CommerceAPI } from "~/modules/api/commerce";
 
 import stylesheet from "~/styles/tailwind.css";
-import type { Category } from "~/types/product-category";
-import type { User } from "~/types/user";
-import { $fetch } from "~/utils/api";
+import type { Customer } from "~/types/user";
 import { Layout } from "./components/Layout";
-import { getUser, getUserId } from "./session.server";
+import { getUserId } from "./session.server";
 
 export const links: LinksFunction = () => {
   return [
@@ -36,23 +34,25 @@ export const links: LinksFunction = () => {
   ];
 };
 
-export async function loader({ request }: LoaderArgs) {
+const fetchCustomer = async (request: Request) => {
   const userId = await getUserId(request);
-  let user: User | null = null;
-  const { data: categories } = await $fetch<Category[]>(
-    "/products/categories",
-    {
-      params: { orderby: "count", hide_empty: true },
-      init: {
-        cache: "force-cache",
-      },
-    }
-  );
-
+  let user: Customer | null = null;
   if (userId) {
-    const { data } = await $fetch<User>("/customers/" + userId);
+    const { data } = await CommerceAPI.customers.detail(userId);
     user = data;
   }
+  return user;
+};
+
+export async function loader({ request }: LoaderArgs) {
+  const { data: categories } = await CommerceAPI.productCategories.list({
+    params: {
+      orderby: "count",
+      hide_empty: true,
+    },
+  });
+
+  const user = await fetchCustomer(request);
 
   return json({
     categories,
@@ -62,6 +62,7 @@ export async function loader({ request }: LoaderArgs) {
     },
   });
 }
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -2,6 +2,7 @@ import {
   Link,
   useLocation,
   useNavigate,
+  useNavigation,
   useRevalidator,
   useRouteLoaderData,
 } from "@remix-run/react";
@@ -15,6 +16,7 @@ import {
   SfModal,
 } from "@storefront-ui/react";
 import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { useId, useMemo, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "react-query";
@@ -25,24 +27,28 @@ import { useTheme } from "~/context/theme";
 export const LoginModal: React.FC = () => {
   const { ENV } = useRouteLoaderData("root") as any;
   const { authModal, closeModal, showRegister } = useTheme();
-  const navigate = useNavigate();
 
+  const [success, setSuccess] = useState(false);
   const headingId = useId();
   const descriptionId = useId();
   const modalRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const revalidator = useRevalidator();
 
   const mutation = useMutation(async (formData: FormData) => {
-    const response = await fetch(ENV.SITE_URL + "/login", {
+    const pathname = ENV.SITE_URL + "/login";
+    console.log("path", pathname);
+
+    const response = await fetch(pathname, {
       method: "POST",
       body: formData,
     });
     const data = await response.json();
     if (data.success) {
-      closeModal();
-      toast.success("Đăng nhập thành công");
-      navigate(location.pathname);
+      revalidator.revalidate();
+
+      setSuccess(true);
     }
     return data;
   });
@@ -50,6 +56,13 @@ export const LoginModal: React.FC = () => {
   const isOpen = useMemo(() => {
     return authModal === "login";
   }, [authModal]);
+
+  useEffect(() => {
+    if (success && revalidator.state === "idle") {
+      closeModal();
+      toast.success("Đăng nhập thành công");
+    }
+  }, [success, revalidator.state, closeModal]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -169,12 +182,12 @@ export const LoginModal: React.FC = () => {
                 </SfLink>
               </div>
               <SfButton
-                disabled={mutation.isLoading}
+                disabled={mutation.isLoading || revalidator.state === "loading"}
                 type="submit"
                 variant="primary"
-                className="relative w-full"
+                className="relative w-full overflow-hidden"
               >
-                {mutation.isLoading && (
+                {(mutation.isLoading || revalidator.state === "loading") && (
                   <div className="absolute left-0 h-full w-full">
                     <SfLoaderLinear
                       ariaLabel="loading"

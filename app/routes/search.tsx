@@ -4,13 +4,8 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import { SfLink } from "@storefront-ui/react";
 import { ProductList } from "~/modules/category/template/ProductList";
 import type { Product } from "~/types/product";
-import { $fetch } from "~/utils/api";
+import { CommerceAPI } from "~/modules/api/commerce";
 
-export const fetchProducts = async (params: any) => {
-  return await $fetch<Product[]>("/products", {
-    params,
-  });
-};
 export const loader = async ({ request, params }: LoaderArgs) => {
   const url = new URL(request.url);
   const q = url.searchParams.get("q");
@@ -19,7 +14,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   }
 
   const query = { search: q, per_page: 24, page: 1 };
-  const promise = fetchProducts(query);
+  const promise = CommerceAPI.products.list({ params: query });
 
   return defer({
     q: request.url,

@@ -12,12 +12,12 @@ import LoginButton from "~/components/Layout/LoginButton";
 import { SearchBox } from "~/components/Layout/SearchBox";
 import { UserDropdown } from "~/components/Layout/UserDropdown";
 import type { Category } from "~/types/product-category";
-import type { User } from "~/types/user";
+import type { Customer } from "~/types/user";
 
 export default function TopNav() {
   const { categories, user } = useRouteLoaderData("root") as {
     categories: Category[];
-    user: User | null;
+    user: Customer | null;
   };
   const actionItems = [
     {

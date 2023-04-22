@@ -3,12 +3,12 @@ import { SfButton, SfLoaderLinear } from "@storefront-ui/react";
 import { Suspense, useState } from "react";
 import { useQuery } from "react-query";
 import { NoData } from "~/components/NoData";
+import { CommerceAPI } from "~/modules/api/commerce";
 import ProductCard from "~/modules/product/components/ProductCard";
 import ProductCardSkeleton from "~/modules/product/components/ProductCardSkeleton";
 import type { loader } from "~/routes/c.$slug";
 import type { WooResponse } from "~/types/common";
 import type { Product } from "~/types/product";
-import { $fetch } from "~/utils/api";
 
 type Props = {
   promise: Promise<WooResponse<Product[]>>;
@@ -25,7 +25,7 @@ export const ProductList: React.FC<Props> = ({ promise, showCount }) => {
   const { data, isLoading, refetch } = useQuery(
     ["products", page],
     async () =>
-      await $fetch<Product[]>("/products", {
+      await CommerceAPI.products.list({
         params: {
           ...query,
           page: page,
