@@ -18,6 +18,8 @@ export interface WooMetadata {
 
 export interface RootLoaderData {
   categories: Category[];
-  user: Customer | null;
+  userPromises: Promise<Maybe<Customer>>;
   ENV: { SITE_URL: string };
 }
+
+export type Maybe<T> = T | null;

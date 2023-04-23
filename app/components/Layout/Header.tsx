@@ -1,36 +1,18 @@
-import { Form, Link, useRouteLoaderData } from "@remix-run/react";
-import {
-  SfButton,
-  SfIconFavorite,
-  SfIconPerson,
-  SfIconShoppingCart,
-  SfInput,
-} from "@storefront-ui/react";
-import { IconHeart, IconSearch } from "@tabler/icons-react";
+import { Link } from "@remix-run/react";
+import { SfButton } from "@storefront-ui/react";
+import { IconHeart } from "@tabler/icons-react";
 import classNames from "classnames";
 import { CartDrawer } from "~/components/Cart/CartDrawer";
 import LoginButton from "~/components/Layout/LoginButton";
 import { SearchBox } from "~/components/Layout/SearchBox";
 import { UserDropdown } from "~/components/Layout/UserDropdown";
-import type { Category } from "~/types/product-category";
-import type { Customer } from "~/types/user";
+import { useApp } from "~/hooks/use-app";
+import { useAuth } from "~/hooks/user-auth";
 
 export default function TopNav() {
-  const { categories, user } = useRouteLoaderData("root") as {
-    categories: Category[];
-    user: Customer | null;
-  };
-  const actionItems = [
-    {
-      icon: <SfIconShoppingCart />,
-      ariaLabel: "Cart",
-    },
-    {
-      icon: <SfIconFavorite />,
-      ariaLabel: "Wishlist",
-    },
-  ];
+  const { categories } = useApp();
 
+  const { customer } = useAuth();
   return (
     <div className=" h-full w-full">
       <header className="flex h-14 w-full justify-center border-b border-neutral-200 bg-white md:h-20">
@@ -56,7 +38,7 @@ export default function TopNav() {
               slotPrefix={<IconHeart />}
               square
             />
-            {user ? <UserDropdown /> : <LoginButton />}
+            {customer ? <UserDropdown /> : <LoginButton />}
           </nav>
         </div>
       </header>

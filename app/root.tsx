@@ -1,6 +1,8 @@
 import type { LinksFunction, LoaderArgs } from "@remix-run/node";
+import { defer } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
+  Await,
   Links,
   LiveReload,
   Meta,
@@ -18,7 +20,10 @@ import globalStyle from "~/styles/index.css";
 import type { Customer } from "~/types/user";
 import { Layout } from "./components/Layout";
 import { getUserId } from "./session.server";
-import { CartProvider } from "~/components/Cart/CartProvider";
+import { CartProvider } from "~/hooks/use-cart";
+import { Suspense } from "react";
+import { AuthProvider } from "~/hooks/user-auth";
+import { AppProvider } from "~/hooks/use-app";
 
 export const links: LinksFunction = () => {
   return [
@@ -48,18 +53,17 @@ const fetchCustomer = async (request: Request) => {
 };
 
 export async function loader({ request }: LoaderArgs) {
-  const { data: categories } = await CommerceAPI.productCategories.list({
+  const categoriesPromise = CommerceAPI.productCategories.list({
     params: {
       orderby: "count",
       hide_empty: true,
     },
   });
 
-  const user = await fetchCustomer(request);
+  const userPromises = fetchCustomer(request);
 
-  return json({
-    categories,
-    user,
+  return defer({
+    promises: Promise.all([userPromises, categoriesPromise]),
     ENV: {
       SITE_URL: process.env.SITE_URL,
     },
@@ -78,7 +82,7 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
-  const data = useLoaderData<typeof loader>();
+  const { ENV, promises } = useLoaderData<typeof loader>();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -92,14 +96,27 @@ export default function App() {
         <body>
           <script
             dangerouslySetInnerHTML={{
-              __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+              __html: `window.ENV = ${JSON.stringify(ENV)}`,
             }}
           />
-          <ThemeProvider>
-            <CartProvider customer={data.user as Customer}>
-              <Layout />
-            </CartProvider>
-          </ThemeProvider>
+          <Suspense fallback={<>Loading...</>}>
+            <Await resolve={promises}>
+              {([customer, categoriesData]) => (
+                <>
+                  <AppProvider categories={categoriesData.data} env={ENV}>
+                    <AuthProvider customer={customer}>
+                      <ThemeProvider>
+                        <CartProvider customer={customer as Customer}>
+                          <Layout />
+                        </CartProvider>
+                      </ThemeProvider>
+                    </AuthProvider>
+                  </AppProvider>
+                </>
+              )}
+            </Await>
+          </Suspense>
+
           <ScrollRestoration />
 
           <Toaster

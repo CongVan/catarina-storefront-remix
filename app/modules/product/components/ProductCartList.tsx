@@ -1,4 +1,4 @@
-import { useCart } from "~/components/Cart/CartProvider";
+import { useCart } from "~/hooks/use-cart";
 import { ProductCartItemCard } from "~/modules/product/components/ProductCartItemCard";
 
 export const ProductCartList: React.FC = () => {

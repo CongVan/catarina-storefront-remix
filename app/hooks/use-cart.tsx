@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import {
   createContext,
   useCallback,
@@ -7,6 +8,7 @@ import {
   useMemo,
   useReducer,
 } from "react";
+import type { UseMutateFunction } from "react-query";
 import { useMutation } from "react-query";
 import { CommerceAPI } from "~/modules/api/commerce";
 import type { Product } from "~/types/product";
@@ -14,6 +16,7 @@ import type { ProductVariant } from "~/types/product-variations";
 import type { Customer } from "~/types/user";
 
 export type Line = {
+  key: string;
   productName: Pick<Product, "name">["name"];
   productImage: string;
   productId: Pick<Product, "id">["id"];
@@ -26,6 +29,7 @@ export type Line = {
 type State = {
   lines: Line[];
   count: number;
+  isLoading?: boolean;
 };
 
 enum ActionType {
@@ -71,6 +75,14 @@ type Action = {
     productId: Pick<Product, "id">;
     variantId: Pick<ProductVariant, "id">;
   }) => void;
+  saveCart: UseMutateFunction<
+    {
+      data: Customer;
+    },
+    unknown,
+    void,
+    unknown
+  >;
 };
 
 type CartState = State & Action;
@@ -82,14 +94,35 @@ const initialState: CartState = {
   increaseQuantity() {},
   decreaseQuantity() {},
   removeFromCart() {},
+  saveCart() {},
 };
 
 const CartContext = createContext<CartState>(initialState);
-
+const product2Line = ({
+  product,
+  variant,
+  quantity,
+}: Parameters<Action["addToCart"]>[0]) => {
+  return {
+    key: getCartMetaKey(product.id, variant.id),
+    productId: product.id,
+    productImage: product.images[0].src,
+    productName: product.name,
+    variantId: variant.id,
+    price: +variant.price,
+    attributes: variant.attributes,
+    quantity,
+  };
+};
 const getIndexProductInCart = (lines: State["lines"], productId, variantId) => {
   return lines.findIndex(
     (line) => line.productId === productId && line.variantId === variantId
   );
+};
+const CART_META_KEY = "cart-line";
+
+const getCartMetaKey = (productId, variantId) => {
+  return `${CART_META_KEY}-${productId}-${variantId}`;
 };
 
 const cartReducer = (state: State, action: ActionProps) => {
@@ -107,15 +140,7 @@ const cartReducer = (state: State, action: ActionProps) => {
         if (productIndex > -1) {
           s.lines[productIndex].quantity += quantity;
         } else {
-          s.lines.push({
-            productId: product.id,
-            productImage: product.images[0].src,
-            productName: product.name,
-            variantId: variant.id,
-            price: +variant.price,
-            attributes: variant.attributes,
-            quantity,
-          });
+          s.lines.push(product2Line({ product, variant, quantity }));
         }
       });
     }
@@ -180,7 +205,6 @@ type CartProviderProps = {
   children?: ReactNode;
   customer?: Customer | null;
 };
-const CART_META_KEY = "cart";
 
 const initState = ({ customer }: { customer?: Customer | null }): State => {
   const defaultState = {
@@ -188,11 +212,13 @@ const initState = ({ customer }: { customer?: Customer | null }): State => {
     count: 0,
   };
   if (!customer) return defaultState;
-  const cartMetaData = customer.meta_data.find((s) => s.key === CART_META_KEY);
-  if (!cartMetaData) {
+  const linesData = customer.meta_data.filter((s) =>
+    s.key.startsWith(CART_META_KEY)
+  );
+  if (!linesData) {
     return defaultState;
   }
-  const lines = JSON.parse(cartMetaData.value);
+  const lines = Object.values(linesData).map((line) => JSON.parse(line.value));
   return {
     ...defaultState,
     lines,
@@ -201,7 +227,29 @@ const initState = ({ customer }: { customer?: Customer | null }): State => {
 export const CartProvider = ({ children, customer }: CartProviderProps) => {
   const [state, dispatch] = useReducer(cartReducer, { customer }, initState);
 
-  // const a = useMutation('/update-cart', async () => CommerceAPI.customers.update())
+  const { mutate: saveCart, isLoading } = useMutation(async (data: any) => {
+    const { product, variant, quantity } = data;
+    const productIndex = getIndexProductInCart(
+      state.lines,
+      product.id,
+      variant.id
+    );
+    const newQuantity =
+      productIndex > -1
+        ? quantity + state.lines[productIndex].quantity
+        : quantity;
+
+    return await CommerceAPI.customers.update(customer?.id, {
+      meta_data: [
+        {
+          key: getCartMetaKey(product.id, variant.id),
+          value: JSON.stringify(
+            product2Line({ product, variant, quantity: newQuantity })
+          ),
+        },
+      ],
+    });
+  });
 
   const addToCart = useCallback(
     (payload: Parameters<Action["addToCart"]>[0]) => {
@@ -230,17 +278,28 @@ export const CartProvider = ({ children, customer }: CartProviderProps) => {
     },
     []
   );
+  useEffect(() => {}, [state.lines]);
 
   const value = useMemo(() => {
     return {
       ...state,
       count: state.lines.length,
+      isLoading,
       addToCart,
       removeFromCart,
       increaseQuantity,
       decreaseQuantity,
+      saveCart,
     };
-  }, [state, addToCart, removeFromCart, increaseQuantity, decreaseQuantity]);
+  }, [
+    state,
+    isLoading,
+    addToCart,
+    removeFromCart,
+    saveCart,
+    increaseQuantity,
+    decreaseQuantity,
+  ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

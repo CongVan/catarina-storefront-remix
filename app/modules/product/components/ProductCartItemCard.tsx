@@ -10,7 +10,7 @@ import type { ChangeEvent } from "react";
 import { useId } from "react";
 import { useCounter } from "react-use";
 import { twMerge } from "tailwind-merge";
-import type { Line } from "~/components/Cart/CartProvider";
+import type { Line } from "~/hooks/use-cart";
 import { formatCurrency } from "~/utils/currency";
 
 export const ProductCartItemCard: React.FC<{ line: Line }> = ({ line }) => {

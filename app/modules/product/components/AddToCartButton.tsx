@@ -1,23 +1,28 @@
-import { useRouteLoaderData } from "@remix-run/react";
-import { SfButton, SfIconAdd, SfIconRemove } from "@storefront-ui/react";
+import {
+  SfButton,
+  SfIconAdd,
+  SfIconRemove,
+  SfLoaderLinear,
+} from "@storefront-ui/react";
 import { IconShoppingCart } from "@tabler/icons-react";
 import { clamp } from "lodash";
 import type { ChangeEvent } from "react";
+import { useEffect } from "react";
 import { useId } from "react";
 import { toast } from "react-hot-toast";
 import { useCounter } from "react-use";
-import { useCart } from "~/components/Cart/CartProvider";
+import { useCart } from "~/hooks/use-cart";
+
 import { useTheme } from "~/context/theme";
-import type { RootLoaderData } from "~/types/common";
 import type { Product } from "~/types/product";
 import type { ProductVariant } from "~/types/product-variations";
+import { RequireAuth } from "~/components/RequireLogin";
 
 export const AddToCartButton: React.FC<{
   variant: ProductVariant | null;
   product: Product;
 }> = ({ variant, product }) => {
-  const { user } = useRouteLoaderData("root") as RootLoaderData;
-  const { addToCart } = useCart();
+  const { addToCart, isLoading, lines, saveCart } = useCart();
   const { toggleCartModal, showLogin } = useTheme();
 
   const inputId = useId();
@@ -31,18 +36,22 @@ export const AddToCartButton: React.FC<{
     set(Number(clamp(nextValue, min, max)));
   }
 
-  const onClickAddToCart = () => {
-    if (!user) {
-      toast("Vui lòng đăng nhập để sử dụng tính năng này");
-      return showLogin();
-    }
+  const onClickAddToCart = async () => {
     if (variant) {
-      addToCart({ product, variant, quantity });
-      toggleCartModal(true);
+      await saveCart({ product, variant, quantity: quantity } as any, {
+        onSuccess(data, variables, context) {
+          addToCart({ product, variant, quantity });
+          toggleCartModal(true);
+        },
+      });
     } else {
       toast.error("Not found variant");
     }
   };
+
+  useEffect(() => {
+    console.log("lines", lines);
+  }, [lines]);
 
   return (
     <div className="items-start sm:flex ">
@@ -87,16 +96,29 @@ export const AddToCartButton: React.FC<{
         <strong className="text-neutral-900">{max}</strong> in stock
       </p> */}
       </div>
-      <SfButton
-        type="button"
-        size="lg"
-        className="w-full font-thin uppercase xs:ml-4"
-        slotPrefix={<IconShoppingCart className="h-6 w-6" />}
-        disabled={variant === null}
-        onClick={onClickAddToCart}
-      >
-        {variant === null ? "Chọn kích thước" : "Thêm vào giỏ hàng"}
-      </SfButton>
+      <RequireAuth>
+        {({ handle }) => (
+          <SfButton
+            type="button"
+            size="lg"
+            className="relative w-full overflow-hidden font-thin uppercase xs:ml-4"
+            slotPrefix={<IconShoppingCart className="h-6 w-6" />}
+            disabled={variant === null || isLoading}
+            onClick={() => handle(onClickAddToCart)}
+          >
+            {isLoading && (
+              <div className="absolute left-0 h-full w-full">
+                <SfLoaderLinear
+                  ariaLabel="loading"
+                  className="h-full w-full bg-transparent text-primary-400 opacity-40"
+                  size="lg"
+                />
+              </div>
+            )}
+            {variant === null ? "Chọn kích thước" : "Thêm vào giỏ hàng"}
+          </SfButton>
+        )}
+      </RequireAuth>
     </div>
   );
 };

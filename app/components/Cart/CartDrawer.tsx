@@ -1,4 +1,3 @@
-import { useRouteLoaderData } from "@remix-run/react";
 import {
   SfButton,
   SfDrawer,
@@ -14,15 +13,14 @@ import {
 import { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { twMerge } from "tailwind-merge";
-import { useCart } from "~/components/Cart/CartProvider";
+import { useCart } from "~/hooks/use-cart";
 import { useTheme } from "~/context/theme";
+import { useAuth } from "~/hooks/user-auth";
 import { ProductCartList } from "~/modules/product/components/ProductCartList";
-import { loader } from "~/root";
-import type { RootLoaderData } from "~/types/common";
 
 export const CartDrawer: React.FC = () => {
   const { isShowCartModal, toggleCartModal, showLogin } = useTheme();
-  const { user } = useRouteLoaderData("root") as RootLoaderData;
+  const { customer } = useAuth();
   const { count } = useCart();
 
   const nodeRef = useRef(null);
@@ -102,7 +100,7 @@ export const CartDrawer: React.FC = () => {
             </SfButton>
           </header>
           <div className="flex h-full flex-1 flex-col overflow-auto bg-white">
-            {user ? (
+            {customer ? (
               count > 0 ? (
                 <>
                   <div className=" flex-1 p-5 px-5">

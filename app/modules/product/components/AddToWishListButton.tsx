@@ -1,22 +1,21 @@
-import { useRouteLoaderData } from "@remix-run/react";
-import { SfButton, SfIconFavorite, SfTooltip } from "@storefront-ui/react";
+import { SfButton, SfTooltip } from "@storefront-ui/react";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "react-query";
 import { twMerge } from "tailwind-merge";
 import { useTheme } from "~/context/theme";
+import { useAuth } from "~/hooks/user-auth";
 import { CommerceAPI } from "~/modules/api/commerce";
-import type { RootLoaderData } from "~/types/common";
 
 export const AddToWishListButton: React.FC<{
   className?: string;
   productId: number;
 }> = ({ className, productId }) => {
   const { showLogin } = useTheme();
-  const { user } = useRouteLoaderData("root") as RootLoaderData;
+  const { customer } = useAuth();
   const mutation = useMutation(async (body: any) => {
-    const data = await CommerceAPI.customers.update(user?.id, body);
+    const data = await CommerceAPI.customers.update(customer?.id, body);
 
     if (data) {
       toast.success("Đã thêm vào danh sách yêu thích");
@@ -25,8 +24,8 @@ export const AddToWishListButton: React.FC<{
   });
 
   const [favorite, setFavorite] = useState(() => {
-    if (user) {
-      return !!user.meta_data?.find(
+    if (customer) {
+      return !!customer.meta_data?.find(
         (m) => m.key === "favorite-" + productId && m.value === productId + ""
       );
     }
@@ -37,7 +36,7 @@ export const AddToWishListButton: React.FC<{
     if (favorite) {
       return toast.success("Sản phẩm đã được thêm vào danh sách yêu thích");
     }
-    if (!user) {
+    if (!customer) {
       toast("Vui lòng đăng nhập để sử dụng tính năng này");
       showLogin();
     } else {

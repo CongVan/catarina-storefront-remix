@@ -1,12 +1,10 @@
 import { Await, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
-import { useQuery } from "react-query";
 import { NextButton, PrevButton } from "~/components/Carousel/NavButton";
 import { useCarousel } from "~/hooks/use-carousel";
 import { ProductCarouselSkeleton } from "~/modules/home/templates/ProductCarouselSkeleton";
 import ProductCard from "~/modules/product/components/ProductCard";
 import type { loader } from "~/routes/$";
-import { $fetch } from "~/utils/api";
 
 export const ProductRelated: React.FC = () => {
   const { product, promiseRelated } = useLoaderData<typeof loader>();

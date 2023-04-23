@@ -1,11 +1,4 @@
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useNavigation,
-  useRevalidator,
-  useRouteLoaderData,
-} from "@remix-run/react";
+import { Link, useLocation, useRevalidator } from "@remix-run/react";
 import {
   SfButton,
   SfCheckbox,
@@ -16,16 +9,16 @@ import {
   SfModal,
 } from "@storefront-ui/react";
 import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
-import { useId, useMemo, useRef } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "react-query";
 import { CSSTransition } from "react-transition-group";
 import AlertError from "~/components/AlertError";
 import { useTheme } from "~/context/theme";
+import { useApp } from "~/hooks/use-app";
 
 export const LoginModal: React.FC = () => {
-  const { ENV } = useRouteLoaderData("root") as any;
+  const { env } = useApp();
   const { authModal, closeModal, showRegister } = useTheme();
 
   const [success, setSuccess] = useState(false);
@@ -37,7 +30,7 @@ export const LoginModal: React.FC = () => {
   const revalidator = useRevalidator();
 
   const mutation = useMutation(async (formData: FormData) => {
-    const pathname = ENV.SITE_URL + "/login";
+    const pathname = env.SITE_URL + "/login";
 
     const response = await fetch(pathname, {
       method: "POST",

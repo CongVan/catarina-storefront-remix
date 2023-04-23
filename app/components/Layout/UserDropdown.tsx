@@ -1,13 +1,11 @@
-import { Form, useRouteLoaderData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import { SfButton, useDropdown } from "@storefront-ui/react";
 import { IconUser } from "@tabler/icons-react";
 import React from "react";
-import type { Customer } from "~/types/user";
+import { useAuth } from "~/hooks/user-auth";
 
 export function UserDropdown() {
-  const root = useRouteLoaderData("root") as any;
-  const user = root.user as Customer;
-  const ENV = root.ENV;
+  const { customer } = useAuth();
   const [isOpen, setOpen] = React.useState(false);
 
   const close = () => setOpen(false);
@@ -19,7 +17,7 @@ export function UserDropdown() {
     strategy: "absolute",
     placement: "bottom-start",
   });
-
+  if (!customer) return <></>;
   return (
     <div ref={refs.setReference} className="w-max">
       <SfButton
@@ -29,7 +27,7 @@ export function UserDropdown() {
         variant="tertiary"
         onClick={toggle}
       >
-        <span className="hidden md:inline-flex">{user.email}</span>
+        <span className="hidden md:inline-flex">{customer.email}</span>
       </SfButton>
       {isOpen && (
         <ul

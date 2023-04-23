@@ -1,31 +1,23 @@
+import { Link, useLocation, useRevalidator } from "@remix-run/react";
 import {
-  Form,
-  Link,
-  useLocation,
-  useNavigate,
-  useRevalidator,
-  useRouteLoaderData,
-} from "@remix-run/react";
-import {
-  SfModal,
   SfButton,
   SfIconClose,
   SfInput,
-  SfCheckbox,
   SfLink,
   SfLoaderLinear,
+  SfModal,
 } from "@storefront-ui/react";
-import { FormEvent, useEffect, useState } from "react";
-import { useId, useMemo, useRef } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useMutation } from "react-query";
 import { CSSTransition } from "react-transition-group";
 import AlertError from "~/components/AlertError";
 import { useTheme } from "~/context/theme";
+import { useApp } from "~/hooks/use-app";
 
 export const RegisterModal: React.FC = () => {
-  const { ENV } = useRouteLoaderData("root") as any;
+  const { env } = useApp();
   const {
     register,
     handleSubmit,
@@ -55,7 +47,7 @@ export const RegisterModal: React.FC = () => {
   }, [authModal]);
 
   const mutation = useMutation(async (formData: FormData) => {
-    const response = await fetch(ENV.SITE_URL + "/register", {
+    const response = await fetch(env.SITE_URL + "/register", {
       method: "POST",
       body: formData,
     });
