@@ -1,81 +1,75 @@
 import {
   SfButton,
-  SfIconRemove,
-  SfLink,
-  SfIconAdd,
-  SfIconSell,
-  SfIconDelete,
-  SfIconFavorite,
-  SfRating,
   SfCounter,
+  SfIconFavorite,
+  SfLink,
+  SfRating,
 } from "@storefront-ui/react";
-import card from "@assets/smartwatch.png";
 
-import { useCounter } from "react-use";
-import type { ChangeEvent } from "react";
-import { useId } from "react";
-import { clamp } from "@storefront-ui/shared";
-import type { Product } from "~/types/product";
 import { twMerge } from "tailwind-merge";
+import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
+import type { Product } from "~/types/product";
 
 export function ProductHorizontalCard({
+  id,
   name,
   images,
   attributes,
   rating_count,
   average_rating,
   price_html,
+  slug,
   className,
 }: Product & { className?: string }) {
-  const brand = attributes?.find((a) => a.slug === "brand");
-  const fragrants = attributes?.find((a) => a.slug === "fragrants");
+  const brand = attributes?.find((a) => a.name === "Thương hiệu");
+  const linkToDetail = `/${slug}-${id}`;
 
   return (
     <div
       className={twMerge(
+        "transition-all duration-300 ease-in-out",
         "flex w-full items-center rounded-md border border-neutral-200 p-4 hover:shadow-lg",
         "flex-nowrap",
         className
       )}
     >
       <div className="relative w-[120px] min-w-[120px]">
-        <SfLink href="#" className="">
+        <SfLink href={linkToDetail} className="">
           <img
             src={images?.[0].src}
             alt={name}
-            className=" aspect-square  rounded-md object-cover"
+            className=" aspect-square  rounded-md object-contain"
             width={100}
             height={100}
           />
         </SfLink>
-        <SfButton
-          type="button"
-          variant="tertiary"
-          size="sm"
-          square
-          className="absolute bottom-0 right-0 mb-2 mr-2 !rounded-full border border-neutral-200 bg-white"
-          aria-label="Add to wishlist"
-        >
-          <SfIconFavorite size="sm" />
-        </SfButton>
+        <AddToWishListButton
+          productId={id}
+          className="absolute bottom-0 right-0 mb-2 mr-2"
+          iconClass="w-4 h-4"
+        />
       </div>
       <div className="min-w-0 flex-1 pl-2">
-        <SfLink className="block">{brand?.options.join(",")}</SfLink>
         <SfLink
-          href="#"
+          className="block text-xs uppercase no-underline"
+          dangerouslySetInnerHTML={{ __html: brand?.options.join(",") || "" }}
+        ></SfLink>
+        <SfLink
+          href={linkToDetail}
           variant="secondary"
           className="line-clamp-1 no-underline"
           dangerouslySetInnerHTML={{ __html: name }}
         ></SfLink>
 
-        {(fragrants?.options?.length || 0) > 0 && (
-          <p className="my-2 line-clamp-1 block font-normal  text-neutral-700 sf-text-sm">
-            {fragrants?.options.join(" • ")}
-          </p>
-        )}
+        <div className="flex items-center">
+          <SfRating size="xs" value={average_rating} max={5} />
 
+          <SfLink href="#" variant="secondary" className="pl-1 no-underline">
+            <SfCounter size="xs">{rating_count}</SfCounter>
+          </SfLink>
+        </div>
         <span
-          className="block pb-2 font-bold sf-text-lg"
+          className="block pb-2 font-bold text-secondary-600 sf-text-lg"
           dangerouslySetInnerHTML={{ __html: price_html }}
         ></span>
         {/* <SfButton

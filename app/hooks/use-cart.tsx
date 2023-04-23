@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { UseMutateFunction } from "react-query";
 import { useMutation } from "react-query";
+import { useTheme } from "~/context/theme";
 import { CommerceAPI } from "~/modules/api/commerce";
 import type { Product } from "~/types/product";
 import type { ProductVariant } from "~/types/product-variations";
@@ -35,8 +36,7 @@ type State = {
 enum ActionType {
   ADD_TO_CART,
   REMOVE_FROM_CART,
-  INCREASE_QUANTITY,
-  DECREASE_QUANTITY,
+  UPDATE_QUANTITY,
 }
 
 type ActionProps =
@@ -49,12 +49,8 @@ type ActionProps =
       payload: Parameters<Action["removeFromCart"]>[0];
     }
   | {
-      type: ActionType.INCREASE_QUANTITY;
-      payload: Parameters<Action["increaseQuantity"]>[0];
-    }
-  | {
-      type: ActionType.DECREASE_QUANTITY;
-      payload: Parameters<Action["decreaseQuantity"]>[0];
+      type: ActionType.UPDATE_QUANTITY;
+      payload: Parameters<Action["updateQuantity"]>[0];
     };
 
 type Action = {
@@ -64,17 +60,15 @@ type Action = {
     quantity: number;
   }) => void;
   removeFromCart: (params: {
-    productId: Pick<Product, "id">;
-    variantId: Pick<ProductVariant, "id">;
+    productId: Pick<Product, "id">["id"];
+    variantId: Pick<ProductVariant, "id">["id"];
   }) => void;
-  increaseQuantity: (params: {
-    productId: Pick<Product, "id">;
-    variantId: Pick<ProductVariant, "id">;
+  updateQuantity: (params: {
+    productId: Pick<Product, "id">["id"];
+    variantId: Pick<ProductVariant, "id">["id"];
+    quantity: number;
   }) => void;
-  decreaseQuantity: (params: {
-    productId: Pick<Product, "id">;
-    variantId: Pick<ProductVariant, "id">;
-  }) => void;
+
   saveCart: UseMutateFunction<
     {
       data: Customer;
@@ -91,8 +85,7 @@ const initialState: CartState = {
   lines: [],
   count: 0,
   addToCart() {},
-  increaseQuantity() {},
-  decreaseQuantity() {},
+  updateQuantity() {},
   removeFromCart() {},
   saveCart() {},
 };
@@ -148,22 +141,14 @@ const cartReducer = (state: State, action: ActionProps) => {
     case ActionType.REMOVE_FROM_CART: {
       const { variantId, productId } = action.payload;
 
-      const productIndex = getIndexProductInCart(
-        state.lines,
-        productId,
-        variantId
-      );
-
       return produce(state, (s) => {
-        if (productIndex > -1) {
-          delete state.lines[productIndex];
-        } else {
-          throw new Error("not found product in lines of cart");
-        }
+        s.lines = s.lines.filter(
+          (f) => f.productId !== productId && f.variantId !== variantId
+        );
       });
     }
-    case ActionType.INCREASE_QUANTITY: {
-      const { variantId, productId } = action.payload;
+    case ActionType.UPDATE_QUANTITY: {
+      const { variantId, productId, quantity } = action.payload;
 
       const productIndex = getIndexProductInCart(
         state.lines,
@@ -173,25 +158,7 @@ const cartReducer = (state: State, action: ActionProps) => {
 
       return produce(state, (s) => {
         if (productIndex > -1) {
-          state.lines[productIndex].quantity++;
-        } else {
-          throw new Error("not found product in lines of cart");
-        }
-      });
-    }
-
-    case ActionType.DECREASE_QUANTITY: {
-      const { variantId, productId } = action.payload;
-
-      const productIndex = getIndexProductInCart(
-        state.lines,
-        productId,
-        variantId
-      );
-
-      return produce(state, (s) => {
-        if (productIndex > -1) {
-          state.lines[productIndex].quantity--;
+          s.lines[productIndex].quantity = quantity;
         } else {
           throw new Error("not found product in lines of cart");
         }
@@ -226,59 +193,82 @@ const initState = ({ customer }: { customer?: Customer | null }): State => {
 };
 export const CartProvider = ({ children, customer }: CartProviderProps) => {
   const [state, dispatch] = useReducer(cartReducer, { customer }, initState);
+  const { toggleCartModal, showLogin } = useTheme();
 
   const { mutate: saveCart, isLoading } = useMutation(async (data: any) => {
-    const { product, variant, quantity } = data;
-    const productIndex = getIndexProductInCart(
-      state.lines,
-      product.id,
-      variant.id
-    );
-    const newQuantity =
-      productIndex > -1
-        ? quantity + state.lines[productIndex].quantity
-        : quantity;
-
     return await CommerceAPI.customers.update(customer?.id, {
       meta_data: [
         {
-          key: getCartMetaKey(product.id, variant.id),
-          value: JSON.stringify(
-            product2Line({ product, variant, quantity: newQuantity })
-          ),
+          key: data.key,
+          value: data.value,
         },
       ],
     });
   });
 
   const addToCart = useCallback(
-    (payload: Parameters<Action["addToCart"]>[0]) => {
-      dispatch({ type: ActionType.ADD_TO_CART, payload: payload });
+    async (payload: Parameters<Action["addToCart"]>[0]) => {
+      const { product, variant, quantity } = payload;
+      const productIndex = getIndexProductInCart(
+        state.lines,
+        product.id,
+        variant.id
+      );
+      const newQuantity =
+        productIndex > -1
+          ? quantity + state.lines[productIndex].quantity
+          : quantity;
+      await saveCart(
+        {
+          key: getCartMetaKey(product.id, variant.id),
+          value: JSON.stringify(
+            product2Line({ product, variant, quantity: newQuantity })
+          ),
+        },
+        {
+          onSuccess: () => {
+            dispatch({ type: ActionType.ADD_TO_CART, payload: payload });
+            toggleCartModal(true);
+          },
+        }
+      );
     },
-    []
+    [saveCart, toggleCartModal, state.lines]
   );
 
   const removeFromCart = useCallback(
     (payload: Parameters<Action["removeFromCart"]>[0]) => {
-      dispatch({ type: ActionType.REMOVE_FROM_CART, payload: payload });
+      saveCart(
+        {
+          key: getCartMetaKey(payload.productId, payload.variantId),
+        },
+        {
+          onSuccess: () => {
+            dispatch({ type: ActionType.REMOVE_FROM_CART, payload: payload });
+          },
+        }
+      );
     },
-    []
+    [saveCart]
   );
 
-  const increaseQuantity = useCallback(
-    (payload: Parameters<Action["removeFromCart"]>[0]) => {
-      dispatch({ type: ActionType.INCREASE_QUANTITY, payload: payload });
+  const updateQuantity = useCallback(
+    (payload: Parameters<Action["updateQuantity"]>[0]) => {
+      const line = state.lines.find(
+        (l) =>
+          l.productId === payload.productId && l.variantId === payload.variantId
+      );
+      if (!line) {
+        throw new Error("Not found line in cart");
+      }
+      saveCart({
+        key: getCartMetaKey(payload.productId, payload.variantId),
+        value: JSON.stringify({ ...line, quantity: payload.quantity }),
+      });
+      dispatch({ type: ActionType.UPDATE_QUANTITY, payload: payload });
     },
-    []
+    [saveCart, state.lines]
   );
-
-  const decreaseQuantity = useCallback(
-    (payload: Parameters<Action["decreaseQuantity"]>[0]) => {
-      dispatch({ type: ActionType.DECREASE_QUANTITY, payload: payload });
-    },
-    []
-  );
-  useEffect(() => {}, [state.lines]);
 
   const value = useMemo(() => {
     return {
@@ -287,19 +277,10 @@ export const CartProvider = ({ children, customer }: CartProviderProps) => {
       isLoading,
       addToCart,
       removeFromCart,
-      increaseQuantity,
-      decreaseQuantity,
+      updateQuantity,
       saveCart,
     };
-  }, [
-    state,
-    isLoading,
-    addToCart,
-    removeFromCart,
-    saveCart,
-    increaseQuantity,
-    decreaseQuantity,
-  ]);
+  }, [state, isLoading, addToCart, removeFromCart, saveCart, updateQuantity]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

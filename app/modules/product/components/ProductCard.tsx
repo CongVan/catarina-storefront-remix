@@ -49,8 +49,8 @@ export default function ProductCard({
       </div>
       <div className="flex flex-1 flex-col border-t border-neutral-200 p-4">
         <SfLink
-          className="block"
-          dangerouslySetInnerHTML={{ __html: brand?.options?.join(",") || "" }}
+          className="block text-sm uppercase no-underline"
+          dangerouslySetInnerHTML={{ __html: brand?.options.join(",") || "" }}
         ></SfLink>
         <SfLink
           href={linkToDetail}
@@ -72,7 +72,7 @@ export default function ProductCard({
         )}
 
         <span
-          className="block pb-2 font-bold sf-text-lg"
+          className="block pb-2 font-bold text-secondary-600 sf-text-lg"
           dangerouslySetInnerHTML={{ __html: price_html }}
         ></span>
         {/* <SfButton

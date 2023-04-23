@@ -7,23 +7,21 @@ import {
 import { IconShoppingCart } from "@tabler/icons-react";
 import { clamp } from "lodash";
 import type { ChangeEvent } from "react";
-import { useEffect } from "react";
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import { toast } from "react-hot-toast";
 import { useCounter } from "react-use";
 import { useCart } from "~/hooks/use-cart";
 
+import { RequireAuth } from "~/components/RequireLogin";
 import { useTheme } from "~/context/theme";
 import type { Product } from "~/types/product";
 import type { ProductVariant } from "~/types/product-variations";
-import { RequireAuth } from "~/components/RequireLogin";
 
 export const AddToCartButton: React.FC<{
   variant: ProductVariant | null;
   product: Product;
 }> = ({ variant, product }) => {
-  const { addToCart, isLoading, lines, saveCart } = useCart();
-  const { toggleCartModal, showLogin } = useTheme();
+  const { addToCart, isLoading, lines } = useCart();
 
   const inputId = useId();
   const min = 1;
@@ -38,12 +36,7 @@ export const AddToCartButton: React.FC<{
 
   const onClickAddToCart = async () => {
     if (variant) {
-      await saveCart({ product, variant, quantity: quantity } as any, {
-        onSuccess(data, variables, context) {
-          addToCart({ product, variant, quantity });
-          toggleCartModal(true);
-        },
-      });
+      addToCart({ product, variant, quantity });
     } else {
       toast.error("Not found variant");
     }

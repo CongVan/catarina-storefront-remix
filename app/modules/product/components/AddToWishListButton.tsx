@@ -11,7 +11,8 @@ import { CommerceAPI } from "~/modules/api/commerce";
 export const AddToWishListButton: React.FC<{
   className?: string;
   productId: number;
-}> = ({ className, productId }) => {
+  iconClass?: string;
+}> = ({ className, productId, iconClass = "w-5 h-5" }) => {
   const { showLogin } = useTheme();
   const { customer } = useAuth();
   const mutation = useMutation(async (body: any) => {
@@ -73,9 +74,11 @@ export const AddToWishListButton: React.FC<{
         strategy="absolute"
       >
         {favorite ? (
-          <IconHeartFilled className="h-5 w-5  text-primary-600 " />
+          <IconHeartFilled
+            className={twMerge(" text-primary-600 ", iconClass)}
+          />
         ) : (
-          <IconHeart className="h-5 w-5" />
+          <IconHeart className={twMerge(iconClass)} />
         )}
       </SfTooltip>
     </SfButton>

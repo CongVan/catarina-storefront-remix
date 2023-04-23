@@ -6,24 +6,43 @@ import {
 } from "@storefront-ui/react";
 import { IconX } from "@tabler/icons-react";
 import { min, max, clamp } from "lodash";
-import type { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useId } from "react";
-import { useCounter } from "react-use";
+import { useCounter, useDebounce } from "react-use";
 import { twMerge } from "tailwind-merge";
 import type { Line } from "~/hooks/use-cart";
+import { useCart } from "~/hooks/use-cart";
 import { formatCurrency } from "~/utils/currency";
 
 export const ProductCartItemCard: React.FC<{ line: Line }> = ({ line }) => {
+  const { removeFromCart, updateQuantity } = useCart();
   const inputId = useId();
   const min = 1;
   const max = 10;
   const [quantity, { inc, dec, set }] = useCounter(line.quantity);
+  const [debounceQuantity, setDebouncedValue] = useState(line.quantity);
 
-  function handleOnChange(event: ChangeEvent<HTMLInputElement>) {
-    const { value: currentValue } = event.target;
-    const nextValue = parseFloat(currentValue);
-    set(Number(clamp(nextValue, min, max)));
-  }
+  const [, cancel] = useDebounce(
+    () => {
+      setDebouncedValue(quantity);
+    },
+    500,
+    [quantity]
+  );
+
+  useEffect(() => {
+    if (debounceQuantity === line.quantity) return;
+    updateQuantity({
+      productId: line.productId,
+      variantId: line.variantId,
+      quantity: debounceQuantity,
+    });
+  }, [debounceQuantity, updateQuantity, line]);
+
+  const removeLineItem = () => {
+    removeFromCart({ productId: line.productId, variantId: line.variantId });
+  };
+
   return (
     <div className={twMerge("flex w-full items-start p-1", "flex-nowrap")}>
       <div className="relative w-[80px] min-w-[80px]">
@@ -48,11 +67,11 @@ export const ProductCartItemCard: React.FC<{ line: Line }> = ({ line }) => {
           {line.attributes.map((attr) => attr.option).join(", ")}
         </p>
 
-        <span className="block py-1 font-bold sf-text-lg">
+        <span className="sf-text-md block py-1 font-bold">
           {formatCurrency(line.price)}
         </span>
-        <div className="flex gap-2 ">
-          <div className="flex h-10 flex-1 rounded-md border border-neutral-300">
+        <div className="flex justify-between gap-2 ">
+          <div className="flex h-10 rounded-md border border-neutral-300">
             <SfButton
               type="button"
               variant="tertiary"
@@ -70,11 +89,11 @@ export const ProductCartItemCard: React.FC<{ line: Line }> = ({ line }) => {
               id={inputId}
               type="number"
               role="spinbutton"
-              className="[&::-webkit-inner-spin-button]:display-none [&::-webkit-outer-spin-button]:display-none mx-2 w-8 grow appearance-none bg-transparent text-center font-medium [-moz-appearance:textfield] focus-visible:rounded-sm focus-visible:outline-offset focus-visible:outline disabled:placeholder-disabled-900 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+              className="[&::-webkit-inner-spin-button]:display-none [&::-webkit-outer-spin-button]:display-none mx-2 w-8 max-w-[24px] grow appearance-none bg-transparent text-center font-medium [-moz-appearance:textfield] focus-visible:rounded-sm focus-visible:outline-offset focus-visible:outline disabled:placeholder-disabled-900 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
               min={min}
               max={max}
               value={quantity}
-              onChange={handleOnChange}
+              readOnly
             />
             <SfButton
               type="button"
@@ -96,6 +115,7 @@ export const ProductCartItemCard: React.FC<{ line: Line }> = ({ line }) => {
             variant="tertiary"
             slotPrefix={<IconX className="h-6 w-6" />}
             className="h-10"
+            onClick={() => removeLineItem()}
           >
             Xóa
           </SfButton>

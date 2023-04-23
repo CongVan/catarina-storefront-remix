@@ -20,7 +20,7 @@ export const ProductCarouselSkeleton: React.FC<{ title?: string }> = ({
           {Array.from(Array(5)).map((_, i) => (
             <div
               key={i}
-              className="mr-0 min-w-0 flex-shrink-0 flex-grow-0 basis-full md:basis-4/12 md:pr-4 lg:basis-1/4 xl:basis-1/5"
+              className="mr-0 min-w-0 flex-shrink-0 flex-grow-0 basis-full md:basis-4/12 md:pr-4 lg:basis-1/4 xl:basis-1/4"
             >
               <ProductCardSkeleton />
             </div>

@@ -2,6 +2,7 @@ import {
   SfButton,
   SfDrawer,
   SfIconClose,
+  SfLoaderCircular,
   SfTooltip,
   useTrapFocus,
 } from "@storefront-ui/react";
@@ -21,7 +22,7 @@ import { ProductCartList } from "~/modules/product/components/ProductCartList";
 export const CartDrawer: React.FC = () => {
   const { isShowCartModal, toggleCartModal, showLogin } = useTheme();
   const { customer } = useAuth();
-  const { count } = useCart();
+  const { count, isLoading } = useCart();
 
   const nodeRef = useRef(null);
   const drawerRef = useRef(null);
@@ -99,7 +100,12 @@ export const CartDrawer: React.FC = () => {
               <SfIconClose />
             </SfButton>
           </header>
-          <div className="flex h-full flex-1 flex-col overflow-auto bg-white">
+          <div className="relative flex h-full flex-1 flex-col overflow-auto bg-white">
+            {isLoading && (
+              <div className="absolute inset-0 z-[1] flex items-center justify-center bg-black bg-opacity-30">
+                <SfLoaderCircular size="lg" />
+              </div>
+            )}
             {customer ? (
               count > 0 ? (
                 <>
