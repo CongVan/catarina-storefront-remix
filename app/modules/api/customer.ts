@@ -5,4 +5,8 @@ export class CustomerAPI extends BaseAPI<Customer> {
   constructor() {
     super({ baseURL: "/customers" });
   }
+
+  batch(body) {
+    return this.client.post<typeof body>(this.resource("/batch"), body);
+  }
 }

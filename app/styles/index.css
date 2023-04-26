@@ -3,3 +3,11 @@ html {
   font-weight: 400;
   color: #18181b;
 }
+*:focus:not(.focus-visible) {
+  outline: none !important;
+}
+
+/* Optional: Customize .focus-visible */
+.focus-visible {
+  outline-color: lightgreen !important;
+}

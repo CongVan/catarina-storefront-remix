@@ -14,7 +14,7 @@ import { toast } from "react-hot-toast";
 import { useMutation } from "react-query";
 import { CSSTransition } from "react-transition-group";
 import AlertError from "~/components/AlertError";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 import { useApp } from "~/hooks/use-app";
 
 export const LoginModal: React.FC = () => {

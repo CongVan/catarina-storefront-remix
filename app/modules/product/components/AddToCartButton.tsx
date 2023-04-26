@@ -13,7 +13,7 @@ import { useCounter } from "react-use";
 import { useCart } from "~/hooks/use-cart";
 
 import { RequireAuth } from "~/components/RequireLogin";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 import type { Product } from "~/types/product";
 import type { ProductVariant } from "~/types/product-variations";
 
@@ -48,7 +48,7 @@ export const AddToCartButton: React.FC<{
 
   return (
     <div className="items-start sm:flex ">
-      <div className="mb-2 flex flex-col items-stretch xs:inline-flex xs:items-center sm:mb-0">
+      <div className="mb-2 flex flex-col items-stretch sm:mb-0 xs:inline-flex xs:items-center">
         <div className="flex rounded-md border border-neutral-300">
           <SfButton
             type="button"

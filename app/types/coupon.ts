@@ -11,5 +11,5 @@ export interface Coupon {
   code: string;
   amount: string;
   description: string;
-  discount_type: 'percent' | 'fixed_cart' | 'fixed_product';
+  discount_type: "percent" | "fixed_cart" | "fixed_product";
 }

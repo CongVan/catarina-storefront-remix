@@ -11,22 +11,28 @@ import {
   IconShoppingCart,
   IconShoppingCartOff,
 } from "@tabler/icons-react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { twMerge } from "tailwind-merge";
 import { useCart } from "~/hooks/use-cart";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 import { useAuth } from "~/hooks/user-auth";
 import { ProductCartList } from "~/modules/product/components/ProductCartList";
+import { Link, useLocation } from "@remix-run/react";
 
 export const CartDrawer: React.FC = () => {
   const { isShowCartModal, toggleCartModal, showLogin } = useTheme();
   const { customer } = useAuth();
   const { count, isLoading } = useCart();
-
+  const location = useLocation();
   const nodeRef = useRef(null);
   const drawerRef = useRef(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isShowCartModal) {
+      toggleCartModal(false);
+    }
+  }, [location.pathname]);
 
   useTrapFocus(drawerRef, { activeState: isShowCartModal });
   return (
@@ -123,6 +129,9 @@ export const CartDrawer: React.FC = () => {
                     variant="primary"
                     slotPrefix={<IconShoppingCart />}
                     size="lg"
+                    as={Link}
+                    to="/checkout"
+                    onClick={() => toggleCartModal(false)}
                     className="mt-auto w-full rounded-none px-4 py-6 uppercase"
                   >
                     Thanh toán ngay

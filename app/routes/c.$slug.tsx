@@ -4,10 +4,12 @@ import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { SfLink } from "@storefront-ui/react";
 import isEmpty from "lodash/isEmpty";
+import { Breadcrumbs } from "~/components/Breadcrumbs";
 import { CommerceAPI } from "~/modules/api/commerce";
 import { ProductList } from "~/modules/category/template/ProductList";
 import type { WooResponse } from "~/types/common";
 import type { Product } from "~/types/product";
+import { getCategoryDetailLink } from "~/utils/helper";
 
 export async function loader({ params }: LoaderArgs) {
   const id = params.slug?.substring(params.slug.lastIndexOf("-") + 1);
@@ -31,16 +33,18 @@ export async function loader({ params }: LoaderArgs) {
 export default function CategoryPage() {
   const { promise, category } = useLoaderData<typeof loader>();
   return (
-    <div className="container mx-auto">
-      <div className="space-x-4">
-        <SfLink to="/" className="text-sm" as={Link}>
-          Home
-        </SfLink>
-        <SfLink variant="secondary" className="text-sm">
-          {category.name}
-        </SfLink>
+    <>
+      <Breadcrumbs
+        links={[
+          {
+            href: getCategoryDetailLink(category?.slug, category?.id),
+            label: category?.name + "",
+          },
+        ]}
+      />
+      <div className="container mx-auto">
+        <ProductList promise={promise as Promise<WooResponse<Product[]>>} />
       </div>
-      <ProductList promise={promise as Promise<WooResponse<Product[]>>} />
-    </div>
+    </>
   );
 }

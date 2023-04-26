@@ -15,7 +15,7 @@ export class BaseAPI<T> {
   }
 
   resource(url?: string) {
-    return [this.baseURL, url, this.suffixURL].join("/");
+    return [this.baseURL, url, this.suffixURL].join("/").replace(/\/\//g, "/");
   }
 
   async list(config?: AxiosRequestConfig & { id?: any }) {

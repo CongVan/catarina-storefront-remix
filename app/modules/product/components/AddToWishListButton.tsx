@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "react-query";
 import { twMerge } from "tailwind-merge";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 import { useAuth } from "~/hooks/user-auth";
 import { CommerceAPI } from "~/modules/api/commerce";
 

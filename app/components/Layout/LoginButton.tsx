@@ -1,6 +1,6 @@
 import { SfButton } from "@storefront-ui/react";
 import { IconLogin } from "@tabler/icons-react";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 
 export default function LoginButton() {
   const { showLogin } = useTheme();

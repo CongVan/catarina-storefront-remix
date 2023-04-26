@@ -17,7 +17,7 @@ type Props = {
 export const ProductList: React.FC<Props> = ({ promise, showCount }) => {
   const { query } = useLoaderData<typeof loader>();
   const containerClass =
-    "mt-5 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 border border-b-0 border-r-0";
+    "mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  xl:grid-cols-5 rentina-xl:grid-cols-4 border border-b-0 border-r-0";
 
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasMore] = useState(true);

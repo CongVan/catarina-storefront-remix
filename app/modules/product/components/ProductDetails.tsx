@@ -81,7 +81,7 @@ export default function ProductDetails() {
             <ProductVariants />
           </div>
           <div className="mb-4 border-y border-gray-200 py-4">
-            {/* <div className="typography-text-sm mb-4 flex items-center justify-center gap-1.5 rounded-md bg-primary-100 py-1.5 text-primary-700">
+            {/* <div className="sf-text-sm mb-4 flex items-center justify-center gap-1.5 rounded-md bg-primary-100 py-1.5 text-primary-700">
           <SfIconShoppingCartCheckout /> {}
         </div> */}
             <div className="flex justify-center gap-x-4">

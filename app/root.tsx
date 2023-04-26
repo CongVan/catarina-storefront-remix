@@ -12,7 +12,7 @@ import {
 } from "@remix-run/react";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ThemeProvider } from "~/context/theme";
+import { ThemeProvider } from "~/hooks/use-theme";
 import { CommerceAPI } from "~/modules/api/commerce";
 
 import tailwind from "~/styles/tailwind.css";

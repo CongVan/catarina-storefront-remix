@@ -14,7 +14,36 @@ export default {
     fontFamily: {
       sans: ["Public Sans", ...defaultTheme.fontFamily.sans],
     },
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: "1rem",
+
+        md: "0px",
+      },
+    },
     extend: {
+      screens: {
+        "rentina-lg": {
+          raw: "only screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 1024px), only screen and (min--moz-device-pixel-ratio: 2) and (min-width: 1024px), only screen and (-o-min-device-pixel-ratio: 2/1) and (min-width: 1024px), only screen and (min-device-pixel-ratio: 2) and (min-width: 1024px), only screen and (min-resolution: 192dpi) and (min-width: 1024px), only screen and (min-resolution: 2dppx) and (min-width: 1024px)",
+        },
+        "rentina-xl": {
+          raw: "only screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 1280px), only screen and (min--moz-device-pixel-ratio: 2) and (min-width: 1280px), only screen and (-o-min-device-pixel-ratio: 2/1) and (min-width: 1280px), only screen and (min-device-pixel-ratio: 2) and (min-width: 1280px), only screen and (min-resolution: 192dpi) and (min-width: 1280px), only screen and (min-resolution: 2dppx) and (min-width: 1280px)",
+        },
+        "rentina-2xl": {
+          raw: "only screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 1536px), only screen and (min--moz-device-pixel-ratio: 2) and (min-width: 1536px), only screen and (-o-min-device-pixel-ratio: 2/1) and (min-width: 1536px), only screen and (min-device-pixel-ratio: 2) and (min-width: 1536px), only screen and (min-resolution: 192dpi) and (min-width: 1536px), only screen and (min-resolution: 2dppx) and (min-width: 1536px)",
+        },
+        // => @media (min-height: 800px) { ... }
+      },
+      outlineColor: {
+        DEFAULT: "transparent",
+      },
+      outlineOffset: {
+        DEFAULT: "0px",
+      },
+      outlineWidth: {
+        DEFAULT: "0px",
+      },
       colors: {
         primary: {
           "50": "#f2f8fd",

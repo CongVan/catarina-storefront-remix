@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 import { useAuth } from "~/hooks/user-auth";
 
 type Props = {

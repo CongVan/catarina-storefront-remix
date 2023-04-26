@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { UseMutateFunction } from "react-query";
 import { useMutation } from "react-query";
-import { useTheme } from "~/context/theme";
+import { useTheme } from "~/hooks/use-theme";
 import { CommerceAPI } from "~/modules/api/commerce";
 import type { Product } from "~/types/product";
 import type { ProductVariant } from "~/types/product-variations";
@@ -23,13 +23,19 @@ export type Line = {
   productId: Pick<Product, "id">["id"];
   variantId: Pick<ProductVariant, "id">["id"];
   attributes: Pick<ProductVariant, "attributes">["attributes"];
-  price: number;
+  price: string;
+  sale_price: string;
+  regular_price: string;
   quantity: number;
 };
 
 type State = {
   lines: Line[];
   count: number;
+  subTotal?: number;
+  total?: number;
+  shippingFee?: number;
+  discount?: number;
   isLoading?: boolean;
 };
 
@@ -37,6 +43,7 @@ enum ActionType {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   UPDATE_QUANTITY,
+  CLEAR_CART,
 }
 
 type ActionProps =
@@ -51,7 +58,8 @@ type ActionProps =
   | {
       type: ActionType.UPDATE_QUANTITY;
       payload: Parameters<Action["updateQuantity"]>[0];
-    };
+    }
+  | { type: ActionType.CLEAR_CART };
 
 type Action = {
   addToCart: (params: {
@@ -77,6 +85,7 @@ type Action = {
     void,
     unknown
   >;
+  clear: () => void;
 };
 
 type CartState = State & Action;
@@ -88,6 +97,7 @@ const initialState: CartState = {
   updateQuantity() {},
   removeFromCart() {},
   saveCart() {},
+  clear() {},
 };
 
 const CartContext = createContext<CartState>(initialState);
@@ -102,7 +112,9 @@ const product2Line = ({
     productImage: product.images[0].src,
     productName: product.name,
     variantId: variant.id,
-    price: +variant.price,
+    price: variant.price,
+    sale_price: variant.sale_price,
+    regular_price: variant.regular_price,
     attributes: variant.attributes,
     quantity,
   };
@@ -114,7 +126,7 @@ const getIndexProductInCart = (lines: State["lines"], productId, variantId) => {
 };
 const CART_META_KEY = "cart-line";
 
-const getCartMetaKey = (productId, variantId) => {
+export const getCartMetaKey = (productId, variantId) => {
   return `${CART_META_KEY}-${productId}-${variantId}`;
 };
 
@@ -164,6 +176,12 @@ const cartReducer = (state: State, action: ActionProps) => {
         }
       });
     }
+    case ActionType.CLEAR_CART: {
+      return produce(state, (s) => {
+        s.lines = [];
+        s.count = 0;
+      });
+    }
     default:
       return state;
   }
@@ -185,7 +203,17 @@ const initState = ({ customer }: { customer?: Customer | null }): State => {
   if (!linesData) {
     return defaultState;
   }
-  const lines = Object.values(linesData).map((line) => JSON.parse(line.value));
+  const lines = Object.values(linesData)
+    .map((line) => {
+      let json;
+      try {
+        json = JSON.parse(line.value);
+      } catch (error) {
+        json = null;
+      }
+      return json;
+    })
+    .filter(Boolean);
   return {
     ...defaultState,
     lines,
@@ -193,7 +221,7 @@ const initState = ({ customer }: { customer?: Customer | null }): State => {
 };
 export const CartProvider = ({ children, customer }: CartProviderProps) => {
   const [state, dispatch] = useReducer(cartReducer, { customer }, initState);
-  const { toggleCartModal, showLogin } = useTheme();
+  const { toggleCartModal } = useTheme();
 
   const { mutate: saveCart, isLoading } = useMutation(async (data: any) => {
     return await CommerceAPI.customers.update(customer?.id, {
@@ -270,6 +298,9 @@ export const CartProvider = ({ children, customer }: CartProviderProps) => {
     [saveCart, state.lines]
   );
 
+  const clear = useCallback(() => {
+    dispatch({ type: ActionType.CLEAR_CART });
+  }, []);
   const value = useMemo(() => {
     return {
       ...state,
@@ -279,8 +310,17 @@ export const CartProvider = ({ children, customer }: CartProviderProps) => {
       removeFromCart,
       updateQuantity,
       saveCart,
+      clear,
     };
-  }, [state, isLoading, addToCart, removeFromCart, saveCart, updateQuantity]);
+  }, [
+    state,
+    isLoading,
+    addToCart,
+    removeFromCart,
+    saveCart,
+    updateQuantity,
+    clear,
+  ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

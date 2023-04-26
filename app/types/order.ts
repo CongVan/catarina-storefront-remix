@@ -1,14 +1,14 @@
-import { WooMetadata } from '@/types/common';
+import type { WooMetadata } from "~/types/common";
 
 export type OrderStatus =
-  | 'pending'
-  | 'processing'
-  | 'on-hold'
-  | 'completed'
-  | 'cancelled'
-  | 'refunded'
-  | 'failed'
-  | 'trash';
+  | "pending"
+  | "processing"
+  | "on-hold"
+  | "completed"
+  | "cancelled"
+  | "refunded"
+  | "failed"
+  | "trash";
 
 export interface Address {
   first_name: string;
@@ -34,6 +34,7 @@ export interface OrderLine {
   quantity: number;
   tax_class: string;
   subtotal: string;
+  image: { src: string };
   readonly subtotal_tax: string;
   total: string;
   readonly total_tax: string;
@@ -55,7 +56,7 @@ export interface OrderFeeLine {
   id: number;
   name: string;
   tax_class: string;
-  tax_status: 'taxable' | 'none';
+  tax_status: "taxable" | "none";
   total: string;
   total_tax: string;
   meta_data: WooMetadata;
