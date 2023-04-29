@@ -1,4 +1,5 @@
 import { SfButton, SfInput, SfLoaderLinear } from "@storefront-ui/react";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -8,12 +9,13 @@ import { formatCurrency } from "~/utils/currency";
 const COUPON_ERROR = {
   invalid: "Mã giảm giá không đúng",
   require: "Vui lòng nhập mã giảm giá",
+  expired: "Mã giảm giá đã hết hạn",
 };
 export const CouponInput: React.FC = () => {
   const { watch, setValue } = useFormContext();
   const couponLines = watch("coupon_lines");
   const [touched, setTouched] = useState(false);
-  const [error, setError] = useState<"require" | "invalid" | "">("");
+  const [error, setError] = useState<keyof typeof COUPON_ERROR | "">("");
   const [couponCode, setCouponCode] = useState(couponLines?.[0]?.code);
   const { data, isLoading } = useQuery(
     "/coupons-" + couponCode,
@@ -28,15 +30,20 @@ export const CouponInput: React.FC = () => {
       console.log("coupon", coupon);
 
       if (coupon) {
-        setError("");
-        setValue("coupon_lines", [
-          {
-            id: coupon.id,
-            code: coupon.code,
-            discount: coupon.amount,
-            description: coupon.description,
-          },
-        ]);
+        if (dayjs.utc(coupon.date_expires).local().isBefore(dayjs())) {
+          setError("expired");
+          setValue("coupon_lines", []);
+        } else {
+          setError("");
+          setValue("coupon_lines", [
+            {
+              id: coupon.id,
+              code: coupon.code,
+              discount: coupon.amount,
+              description: coupon.description,
+            },
+          ]);
+        }
       } else {
         setError("invalid");
         setValue("coupon_lines", []);

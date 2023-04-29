@@ -4,7 +4,10 @@ import { Footer } from "~/components/Layout/Footer";
 import Header from "~/components/Layout/Header";
 import { LoginModal } from "~/components/Layout/LoginModal";
 import { RegisterModal } from "~/components/Layout/RegisterModal";
-
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { Breadcrumbs } from "~/components/Breadcrumbs";
+dayjs.extend(utc);
 export const Layout = React.memo(function () {
   console.log("layout render");
 
@@ -12,6 +15,8 @@ export const Layout = React.memo(function () {
     <>
       <Header />
       <main className="mt-2">
+        <Breadcrumbs />
+
         <Outlet />
       </main>
       <LoginModal />

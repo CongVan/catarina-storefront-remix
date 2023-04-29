@@ -11,3 +11,7 @@ html {
 .focus-visible {
   outline-color: lightgreen !important;
 }
+
+.currency {
+  @apply font-semibold tracking-wider;
+}

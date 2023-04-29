@@ -1,20 +1,18 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { json } from "@remix-run/node";
 import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 
-import { Breadcrumbs } from "~/components/Breadcrumbs";
+import { Link } from "@remix-run/react";
+import { SfButton } from "@storefront-ui/react";
 import { useCart } from "~/hooks/use-cart";
 import type { CheckoutFormValues } from "~/hooks/use-checkout";
-import { checkoutFormSchema } from "~/hooks/use-checkout";
-import { initCheckoutForm } from "~/hooks/use-checkout";
+import { checkoutFormSchema, initCheckoutForm } from "~/hooks/use-checkout";
+import { useAuth } from "~/hooks/user-auth";
 import { CommerceAPI } from "~/modules/api/commerce";
 import AddressForm from "~/modules/checkout/components/AddressForm";
 import DeliveryMethods from "~/modules/checkout/components/DeliveryMethods";
 import OrderSummary from "~/modules/checkout/components/OrderSummary";
 import PaymentMethods from "~/modules/checkout/components/PaymentMethods";
-import { SfButton } from "@storefront-ui/react";
-import { Link } from "@remix-run/react";
-import { useAuth } from "~/hooks/user-auth";
 
 const fetchMethods = async () => {
   const { data } = await CommerceAPI.shippingZones.list();
@@ -36,7 +34,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Breadcrumbs links={[{ href: "/checkout", label: "Thanh toán" }]} />
       <div className="container mx-auto">
         {count <= 0 ? (
           <div className="flex min-h-[320px] w-full items-center justify-center rounded-md bg-neutral-100">
@@ -65,3 +62,7 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+export const handle = {
+  breadcrumb: { title: "Đặt hàng" },
+};

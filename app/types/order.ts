@@ -1,14 +1,16 @@
 import type { WooMetadata } from "~/types/common";
+export const ORDER_STATUS = [
+  "pending",
+  "processing",
+  "on-hold",
+  "completed",
+  "cancelled",
+  "refunded",
+  "failed",
+  "trash",
+] as const;
 
-export type OrderStatus =
-  | "pending"
-  | "processing"
-  | "on-hold"
-  | "completed"
-  | "cancelled"
-  | "refunded"
-  | "failed"
-  | "trash";
+export type OrderStatus = (typeof ORDER_STATUS)[number];
 
 export interface Address {
   first_name: string;

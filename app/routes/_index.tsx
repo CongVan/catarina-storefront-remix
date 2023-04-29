@@ -1,6 +1,6 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
-import { Await, useLoaderData } from "@remix-run/react";
+import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import { CommerceAPI } from "~/modules/api/commerce";
 

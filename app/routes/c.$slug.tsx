@@ -1,15 +1,12 @@
 import { defer } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import { SfLink } from "@storefront-ui/react";
 import isEmpty from "lodash/isEmpty";
-import { Breadcrumbs } from "~/components/Breadcrumbs";
 import { CommerceAPI } from "~/modules/api/commerce";
 import { ProductList } from "~/modules/category/template/ProductList";
 import type { WooResponse } from "~/types/common";
 import type { Product } from "~/types/product";
-import { getCategoryDetailLink } from "~/utils/helper";
 
 export async function loader({ params }: LoaderArgs) {
   const id = params.slug?.substring(params.slug.lastIndexOf("-") + 1);
@@ -27,24 +24,25 @@ export async function loader({ params }: LoaderArgs) {
   };
   const promise = CommerceAPI.products.list({ params: query });
 
-  return defer({ category: category, promise, query });
+  return defer({
+    category: category,
+    promise,
+    query,
+    breadcrumb: { title: category.name },
+  });
 }
 
 export default function CategoryPage() {
   const { promise, category } = useLoaderData<typeof loader>();
   return (
     <>
-      <Breadcrumbs
-        links={[
-          {
-            href: getCategoryDetailLink(category?.slug, category?.id),
-            label: category?.name + "",
-          },
-        ]}
-      />
       <div className="container mx-auto">
         <ProductList promise={promise as Promise<WooResponse<Product[]>>} />
       </div>
     </>
   );
 }
+
+export const handle = {
+  breadcrumb: { title: "" },
+};

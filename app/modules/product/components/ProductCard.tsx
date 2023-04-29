@@ -38,7 +38,7 @@ export default function ProductCard({
           <img
             src={images?.[0].src}
             alt={name}
-            className="mx-auto aspect-square h-auto w-[120px] max-w-[160px] rounded-md object-cover md:w-full"
+            className="mx-auto aspect-square h-auto w-[120px] max-w-[160px] rounded-md object-contain md:w-full"
           />
         </Link>
 
@@ -72,7 +72,7 @@ export default function ProductCard({
         )}
 
         <span
-          className="block pb-2 font-bold text-secondary-600 sf-text-lg"
+          className="money block pb-2 font-bold text-secondary-600 sf-text-lg"
           dangerouslySetInnerHTML={{ __html: price_html }}
         ></span>
         {/* <SfButton

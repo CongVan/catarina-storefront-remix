@@ -12,4 +12,5 @@ export interface Coupon {
   amount: string;
   description: string;
   discount_type: "percent" | "fixed_cart" | "fixed_product";
+  date_expires: string | null;
 }

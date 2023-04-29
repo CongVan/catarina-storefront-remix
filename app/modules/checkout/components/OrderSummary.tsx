@@ -156,8 +156,8 @@ export default function OrderSummary() {
           <div className="flex items-baseline pb-4">
             <p className="">Phí vận chuyển</p>
             <p className="ml-auto">
-              {shippingLines?.[0]?.total !== undefined ? (
-                formatCurrency(shippingLines?.[0]?.total)
+              {shippingLines?.[0] !== undefined ? (
+                formatCurrency(shippingLines?.[0]?.total || 0)
               ) : (
                 <>Chọn hình thức vận chuyển</>
               )}

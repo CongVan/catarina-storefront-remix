@@ -1,6 +1,10 @@
-import type { LinksFunction, LoaderArgs } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderArgs,
+  MetaFunction,
+  V2_MetaFunction,
+} from "@remix-run/node";
 import { defer } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import {
   Await,
   Links,
@@ -15,15 +19,15 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "~/hooks/use-theme";
 import { CommerceAPI } from "~/modules/api/commerce";
 
-import tailwind from "~/styles/tailwind.css";
+import { Suspense } from "react";
+import { AppProvider } from "~/hooks/use-app";
+import { CartProvider } from "~/hooks/use-cart";
+import { AuthProvider } from "~/hooks/user-auth";
 import globalStyle from "~/styles/index.css";
+import tailwind from "~/styles/tailwind-base.css";
 import type { Customer } from "~/types/user";
 import { Layout } from "./components/Layout";
 import { getUserId } from "./session.server";
-import { CartProvider } from "~/hooks/use-cart";
-import { Suspense } from "react";
-import { AuthProvider } from "~/hooks/user-auth";
-import { AppProvider } from "~/hooks/use-app";
 
 export const links: LinksFunction = () => {
   return [
@@ -132,3 +136,19 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
+export const handle = {
+  breadcrumb: { title: "Trang chủ" },
+};
+
+export const meta: V2_MetaFunction<typeof loader> = () => {
+  return [
+    {
+      title: "Catarina | Nước hoa phong cách",
+    },
+    {
+      property: "description",
+      content: "Nước hoa làm nên phong cách",
+    },
+  ];
+};

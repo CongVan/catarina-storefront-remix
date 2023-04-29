@@ -5,14 +5,7 @@ import type { ProductVariant } from "~/types/product-variations";
 import type { ShippingMethod } from "~/types/shipping-method";
 import { object, string, array, setLocale } from "yup";
 import type { Customer } from "~/types/user";
-
-setLocale({
-  mixed: {
-    required(params) {
-      return "Trường bắt buộc nhập";
-    },
-  },
-});
+import "~/utils/validation";
 
 export type CheckoutFormValues = {
   customer_id?: string;

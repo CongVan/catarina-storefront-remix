@@ -1,6 +1,10 @@
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import { SfButton, useDropdown } from "@storefront-ui/react";
-import { IconUser } from "@tabler/icons-react";
+import {
+  IconInfoCircle,
+  IconLogout,
+  IconShoppingCart,
+} from "@tabler/icons-react";
 import React from "react";
 import { useAuth } from "~/hooks/user-auth";
 
@@ -15,33 +19,60 @@ export function UserDropdown() {
     isOpen,
     onClose: close,
     strategy: "absolute",
-    placement: "bottom-start",
+    placement: "bottom-end",
   });
   if (!customer) return <></>;
   return (
-    <div ref={refs.setReference} className="w-max">
+    <div ref={refs.setReference} className="">
       <SfButton
         className="mr-auto block !px-2"
         type="button"
-        slotPrefix={<IconUser />}
+        slotPrefix={
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-50 font-bold uppercase">
+            {customer.email.substring(0, 2)}
+          </div>
+        }
         variant="tertiary"
         onClick={toggle}
       >
-        <span className="hidden md:inline-flex">{customer.email}</span>
+        <span className="hidden text-sm font-semibold md:inline-flex">
+          {customer.email}
+        </span>
       </SfButton>
       {isOpen && (
         <ul
           ref={refs.setFloating}
           style={style}
-          className="absolute w-max rounded bg-white shadow"
+          className="absolute w-[250px] overflow-hidden rounded bg-white text-sm text-neutral-700 shadow"
         >
-          <li className="px-2.5 py-2 hover:bg-neutral-100">Đơn hàng</li>
-          <li className="px-2.5 py-2 hover:bg-neutral-100">
-            Thông tin tài khoản
+          <li>
+            <Link
+              to="/account/orders"
+              className="flex w-full grow items-center gap-2 px-3 py-2 hover:bg-neutral-50"
+            >
+              <IconShoppingCart className="h-6 w-6" />
+              <span>Xem đơn hàng</span>
+            </Link>
           </li>
-          <li className="px-2.5 py-2 hover:bg-neutral-100">
+          <li>
+            <Link
+              to="/account"
+              className="flex w-full grow items-center gap-2 px-3 py-2 hover:bg-neutral-50"
+            >
+              <IconInfoCircle />
+              <span>Trang cá nhân</span>
+            </Link>
+          </li>
+
+          <li>
             <Form method="post" action="/logout" reloadDocument>
-              <input type="submit" value="Đăng xuất" />
+              <button
+                type="submit"
+                className="flex w-full grow items-center gap-2 px-3 py-2 hover:bg-neutral-50"
+              >
+                <IconLogout />
+                <span>Đăng xuất</span>
+              </button>
             </Form>
           </li>
         </ul>

@@ -39,3 +39,7 @@ export default function SearchPage() {
     </div>
   );
 }
+
+export const handle = {
+  breadcrumb: { title: "Tìm kiếm sản phẩm" },
+};

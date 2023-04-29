@@ -1,11 +1,7 @@
 import { useLoaderData } from "@remix-run/react";
-import { SfRadio, SfListItem } from "@storefront-ui/react";
-import { useState } from "react";
+import { SfListItem, SfRadio } from "@storefront-ui/react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { useQuery } from "react-query";
-import { CommerceAPI } from "~/modules/api/commerce";
 import type { loader } from "~/routes/checkout";
-import type { ShippingMethod, ShippingZone } from "~/types/shipping-method";
 import { formatCurrency } from "~/utils/currency";
 
 export default function DeliveryMethods() {
@@ -47,7 +43,9 @@ export default function DeliveryMethods() {
                           {
                             method_id: id,
                             method_title: title,
-                            total: settings?.cost?.value || 0,
+                            ...(settings?.cost?.value && {
+                              total: settings?.cost?.value,
+                            }),
                           },
                         ]);
                         // setValue("shipping_lines.0.title", method_title);

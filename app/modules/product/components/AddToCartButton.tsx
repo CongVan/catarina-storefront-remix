@@ -13,7 +13,6 @@ import { useCounter } from "react-use";
 import { useCart } from "~/hooks/use-cart";
 
 import { RequireAuth } from "~/components/RequireLogin";
-import { useTheme } from "~/hooks/use-theme";
 import type { Product } from "~/types/product";
 import type { ProductVariant } from "~/types/product-variations";
 

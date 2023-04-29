@@ -9,7 +9,7 @@ type Props = SfInputProps & {
 
 export const Input: React.FC<Props> = ({
   groupClass,
-  label,
+  label = "",
   error,
   register,
   name,
