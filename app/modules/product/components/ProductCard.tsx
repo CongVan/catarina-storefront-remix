@@ -1,16 +1,8 @@
 import { Link } from "@remix-run/react";
-import {
-  SfButton,
-  SfCounter,
-  SfIconFavorite,
-  SfLink,
-  SfRating,
-  SfTooltip,
-} from "@storefront-ui/react";
+import { SfCounter, SfLink, SfRating } from "@storefront-ui/react";
 import { twMerge } from "tailwind-merge";
 import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
 import type { Product } from "~/types/product";
-import { getBrand } from "~/utils/helper";
 
 export default function ProductCard({
   images,

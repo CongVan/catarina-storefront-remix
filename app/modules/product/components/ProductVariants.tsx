@@ -18,7 +18,7 @@ export const ProductVariants: React.FC = () => {
       <div className="mb-2 w-full text-gray-700 sf-headline-5">
         Chọn kích thước
       </div>
-      <div className="mb-4 flex flex-wrap gap-4">
+      <div className="mb-4 flex flex-wrap gap-2">
         {data.map((o) => (
           <SfButton
             key={o.id}

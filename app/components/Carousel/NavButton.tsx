@@ -1,10 +1,12 @@
 import { SfButton } from "@storefront-ui/react";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useMountedState } from "react-use";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   enabled?: boolean;
   onClick: () => void;
+  className?: string;
 };
 
 export const NextButton: React.FC<Props> = (props) => {
@@ -13,7 +15,7 @@ export const NextButton: React.FC<Props> = (props) => {
 
   return (
     <SfButton
-      className="!rounded-full"
+      className={twMerge("!rounded-full", props.className)}
       square
       variant="tertiary"
       onClick={onClick}
@@ -30,7 +32,7 @@ export const PrevButton: React.FC<Props> = (props) => {
 
   return (
     <SfButton
-      className="!rounded-full"
+      className={twMerge("!rounded-full", props.className)}
       square
       onClick={onClick}
       disabled={mounted() && !enabled}

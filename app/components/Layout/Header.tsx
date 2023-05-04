@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { SfButton } from "@storefront-ui/react";
+import { SfButton, SfTooltip } from "@storefront-ui/react";
 import { IconHeart } from "@tabler/icons-react";
 import classNames from "classnames";
 import { CartDrawer } from "~/components/Cart/CartDrawer";
@@ -29,15 +29,20 @@ export default function TopNav() {
           </div>
           <nav className="ml-auto flex flex-row flex-nowrap">
             <CartDrawer />
-            <SfButton
-              className={classNames(
-                "-ml-0.5 mr-2 text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700"
-              )}
-              aria-label={"Yêu thích"}
-              variant="tertiary"
-              slotPrefix={<IconHeart />}
-              square
-            />
+            <SfTooltip label="Sản phẩm yêu thích">
+              <SfButton
+                className={classNames(
+                  "-ml-0.5 mr-2 text-primary-700 hover:bg-primary-100 hover:text-primary-600 active:bg-primary-200 active:text-primary-700"
+                )}
+                aria-label={"Yêu thích"}
+                variant="tertiary"
+                to="/wishlist"
+                as={Link}
+                slotPrefix={<IconHeart />}
+                square
+              />
+            </SfTooltip>
+
             {customer ? <UserDropdown /> : <LoginButton />}
           </nav>
         </div>

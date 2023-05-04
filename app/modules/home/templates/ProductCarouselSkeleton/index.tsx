@@ -1,9 +1,12 @@
+import { twMerge } from "tailwind-merge";
 import { Skeleton } from "~/components/Skeleton";
 import ProductCardSkeleton from "~/modules/product/components/ProductCardSkeleton";
+import { ProductHorizontalCardSkeleton } from "~/modules/product/components/ProductHorizontalCardSkeleton";
 
-export const ProductCarouselSkeleton: React.FC<{ title?: string }> = ({
-  title,
-}) => {
+export const ProductCarouselSkeleton: React.FC<{
+  title?: string;
+  horizontal?: boolean;
+}> = ({ title, horizontal }) => {
   return (
     <div className="">
       <div className="flex items-center justify-between">
@@ -16,13 +19,29 @@ export const ProductCarouselSkeleton: React.FC<{ title?: string }> = ({
       </div>
 
       <div className="container mx-auto overflow-hidden">
-        <div className="flex py-4">
+        <div
+          className={twMerge(
+            "py-4",
+            horizontal
+              ? " grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 rentina-lg:grid-cols-3"
+              : "flex"
+          )}
+        >
           {Array.from(Array(5)).map((_, i) => (
             <div
               key={i}
-              className="mr-0 min-w-0 flex-shrink-0 flex-grow-0 basis-full md:basis-4/12 md:pr-4 lg:basis-1/4 xl:basis-1/5 rentina-xl:basis-1/4"
+              className={twMerge(
+                "mr-0 min-w-0",
+                horizontal
+                  ? ""
+                  : "flex-shrink-0 flex-grow-0 basis-full md:basis-4/12 md:pr-4 lg:basis-1/4 xl:basis-1/5 rentina-xl:basis-1/4"
+              )}
             >
-              <ProductCardSkeleton />
+              {horizontal ? (
+                <ProductHorizontalCardSkeleton />
+              ) : (
+                <ProductCardSkeleton />
+              )}
             </div>
           ))}
         </div>

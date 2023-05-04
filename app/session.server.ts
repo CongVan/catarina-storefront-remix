@@ -18,7 +18,7 @@ export const sessionStorage = createCookieSessionStorage({
 
 const USER_SESSION_KEY = "userId";
 
-const getUserById = async (id) => {
+export const getUserById = async (id) => {
   const { data } = await CommerceAPI.customers.detail(id);
   return data;
 };

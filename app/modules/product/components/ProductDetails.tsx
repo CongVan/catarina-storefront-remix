@@ -3,7 +3,6 @@ import {
   SfButton,
   SfCounter,
   SfIconCompareArrows,
-  SfIconFavorite,
   SfIconPackage,
   SfIconSafetyCheck,
   SfIconSell,
@@ -12,7 +11,7 @@ import {
   SfRating,
 } from "@storefront-ui/react";
 import { Suspense } from "react";
-import { AddToCartButton } from "~/modules/product/components/AddToCartButton";
+import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
 import { ProductVariants } from "~/modules/product/components/ProductVariants";
 import type { loader } from "~/routes/$";
 import { getBrand } from "~/utils/helper";
@@ -93,14 +92,15 @@ export default function ProductDetails() {
               >
                 Compare
               </SfButton>
-              <SfButton
-                type="button"
-                size="sm"
+              <AddToWishListButton
                 variant="tertiary"
-                slotPrefix={<SfIconFavorite size="sm" />}
+                productId={product.id}
+                iconClass="w-4 h-4 mr-1"
+                tooltipClass="flex items-center"
+                className="!rounded-md border-none"
               >
-                Add to list
-              </SfButton>
+                Thêm vào yêu thích
+              </AddToWishListButton>
             </div>
           </div>
         </Await>

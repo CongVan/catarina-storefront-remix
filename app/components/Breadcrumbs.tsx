@@ -1,12 +1,15 @@
-import { Link, useMatches } from "@remix-run/react";
+import { Link, useLoaderData, useMatches } from "@remix-run/react";
 import { SfLink } from "@storefront-ui/react";
 import { IconChevronRight } from "@tabler/icons-react";
 import { twMerge } from "tailwind-merge";
 
 export const Breadcrumbs: React.FC = () => {
   const matches = useMatches();
-  console.log(matches);
 
+  console.log(matches);
+  if (matches[matches.length - 1].handle?.breadcrumb === false) {
+    return <></>;
+  }
   return (
     <nav className="mb-3 flex px-5 py-3" aria-label="Breadcrumb">
       <div className="container mx-auto">

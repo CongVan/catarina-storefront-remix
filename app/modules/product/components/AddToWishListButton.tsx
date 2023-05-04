@@ -1,5 +1,7 @@
+import type { SfButtonProps } from "@storefront-ui/react";
 import { SfButton, SfTooltip } from "@storefront-ui/react";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "react-query";
@@ -8,11 +10,22 @@ import { useTheme } from "~/hooks/use-theme";
 import { useAuth } from "~/hooks/user-auth";
 import { CommerceAPI } from "~/modules/api/commerce";
 
-export const AddToWishListButton: React.FC<{
-  className?: string;
-  productId: number;
-  iconClass?: string;
-}> = ({ className, productId, iconClass = "w-5 h-5" }) => {
+export const AddToWishListButton: React.FC<
+  {
+    className?: string;
+    productId: number;
+    iconClass?: string;
+    children?: ReactNode;
+    tooltipClass?: string;
+  } & SfButtonProps
+> = ({
+  className,
+  productId,
+  iconClass = "w-5 h-5",
+  children,
+  tooltipClass,
+  ...rest
+}) => {
   const { showLogin } = useTheme();
   const { customer } = useAuth();
   const mutation = useMutation(async (body: any) => {
@@ -66,12 +79,14 @@ export const AddToWishListButton: React.FC<{
       )}
       aria-label="Thêm vào yêu thích"
       onClick={() => add()}
+      {...rest}
     >
       <SfTooltip
         label={favorite ? "Đã được yêu thích" : "Thêm vào yêu thích"}
         showArrow
         placement="bottom"
         strategy="absolute"
+        className={twMerge(tooltipClass)}
       >
         {favorite ? (
           <IconHeartFilled
@@ -80,6 +95,7 @@ export const AddToWishListButton: React.FC<{
         ) : (
           <IconHeart className={twMerge(iconClass)} />
         )}
+        {children}
       </SfTooltip>
     </SfButton>
   );

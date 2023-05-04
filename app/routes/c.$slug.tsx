@@ -34,6 +34,7 @@ export async function loader({ params }: LoaderArgs) {
 
 export default function CategoryPage() {
   const { promise, category } = useLoaderData<typeof loader>();
+
   return (
     <>
       <div className="container mx-auto">

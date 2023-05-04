@@ -76,7 +76,9 @@ export default function Index() {
           )}
         </Await>
       </Suspense>
-      <Suspense fallback={<ProductCarouselSkeleton title="Danh mục" />}>
+      <Suspense
+        fallback={<ProductCarouselSkeleton horizontal title="Danh mục" />}
+      >
         <Await resolve={categoriesPromises}>
           {(results) => (
             <>
@@ -94,3 +96,5 @@ export default function Index() {
     </div>
   );
 }
+
+export const handle = { breadcrumb: false };
