@@ -61,7 +61,7 @@ export const ProductList: React.FC<Props> = ({ promise, showCount }) => {
             return (
               <>
                 {showCount && (
-                  <div className=" font-normal sf-headline-4">
+                  <div className=" mb-2 font-normal sf-headline-4 ">
                     Tìm thấy ({meta.total}) sản phẩm
                   </div>
                 )}

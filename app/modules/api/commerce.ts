@@ -4,6 +4,7 @@ import { CustomerAPI } from "~/modules/api/customer";
 import { OrderAPI } from "~/modules/api/order";
 import { ProductAPI } from "~/modules/api/product";
 import { ProductCategoriesAPI } from "~/modules/api/productCategory";
+import { ProductReviewAPI } from "~/modules/api/productReview";
 import { ProductVariantAPI } from "~/modules/api/productVariant";
 import { PaymentGatewaysAPI } from "~/modules/api/pyamentGateways";
 import { ShippingMethodAPI } from "~/modules/api/shippingMethods";
@@ -13,6 +14,7 @@ export const CommerceAPI = {
   products: new ProductAPI(),
   productVariants: new ProductVariantAPI(),
   productCategories: new ProductCategoriesAPI(),
+  productReviews: new ProductReviewAPI(),
   customers: new CustomerAPI(),
   shippingMethods: new ShippingMethodAPI(),
   shippingZones: new ShippingZoneAPI(),

@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import ProductDetails from "~/modules/product/components/ProductDetails";
 import { ProductGallery } from "~/modules/product/components/ProductGallery";
@@ -6,6 +6,8 @@ import { ProductGallery } from "~/modules/product/components/ProductGallery";
 import { CommerceAPI } from "~/modules/api/commerce";
 import { ProductInfo } from "~/modules/product/components/ProductInfo";
 import { ProductRelated } from "~/modules/product/components/ProductRelated";
+import { ProductReviews } from "~/modules/product/components/ProductReviews";
+import { metaDescription, metaTitle } from "~/utils/helper";
 
 export const loader = async ({ params }: LoaderArgs) => {
   const id = params["*"]?.substring(params["*"].lastIndexOf("-") + 1);
@@ -32,6 +34,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   });
 
   return defer({
+    id,
     promiseVariants,
     product: product,
     promiseRelated,
@@ -50,6 +53,7 @@ export default function ProductPage() {
           <ProductDetails />
         </div>
         <ProductInfo />
+        <ProductReviews />
         <ProductRelated />
       </div>
     </>
@@ -59,3 +63,14 @@ export default function ProductPage() {
 export const handle = {
   breadcrumb: { title: "" },
 };
+
+export const meta: V2_MetaFunction = ({ data }) => [
+  {
+    title: metaTitle(data.product.name),
+  },
+  {
+    property: "description",
+    content: metaDescription(data.product.short_description),
+  },
+  { property: "image", content: data.product?.images?.[0]?.src },
+];

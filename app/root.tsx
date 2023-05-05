@@ -28,6 +28,7 @@ import tailwind from "~/styles/tailwind-base.css";
 import type { Customer } from "~/types/user";
 import { Layout } from "./components/Layout";
 import { getUserId } from "./session.server";
+import { metaDescription, metaTitle } from "~/utils/helper";
 
 export const links: LinksFunction = () => {
   return [
@@ -144,11 +145,11 @@ export const handle = {
 export const meta: V2_MetaFunction<typeof loader> = () => {
   return [
     {
-      title: "Catarina | Nước hoa phong cách",
+      title: metaTitle(),
     },
     {
       property: "description",
-      content: "Nước hoa làm nên phong cách",
+      content: metaDescription(),
     },
   ];
 };

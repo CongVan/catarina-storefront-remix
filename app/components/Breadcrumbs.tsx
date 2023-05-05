@@ -13,7 +13,7 @@ export const Breadcrumbs: React.FC = () => {
   return (
     <nav className="mb-3 flex px-5 py-3" aria-label="Breadcrumb">
       <div className="container mx-auto">
-        <ol className="inline-flex items-center">
+        <ol className="inline-flex items-center whitespace-pre-line">
           {matches
             .filter((s) => s.handle && "breadcrumb" in s.handle)
             .map(({ handle, pathname, data }, index, arr) => {
@@ -23,7 +23,7 @@ export const Breadcrumbs: React.FC = () => {
                   {...(index === arr.length - 1 && { "aria-current": "page" })}
                   className="pr-2"
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center whitespace-nowrap">
                     <SfLink
                       className={twMerge(
                         "mr-1 text-sm font-medium !text-neutral-900 no-underline hover:!text-primary-800",
@@ -33,7 +33,7 @@ export const Breadcrumbs: React.FC = () => {
                       as={Link}
                       to={pathname}
                     >
-                      {handle?.breadcrumb.title || data?.breadcrumb?.title}
+                      {data?.breadcrumb?.title || handle?.breadcrumb.title}
                     </SfLink>
                     {index < arr.length - 1 && (
                       <IconChevronRight className="h-4 w-4 text-neutral-400"></IconChevronRight>

@@ -6,15 +6,15 @@ export const NoData: React.FC<{
   className?: string;
   subMessage?: string;
 }> = ({
-  message = "No results found",
-  subMessage = `Try adjusting your search or filter to find what you're looking for`,
+  message = "Không tìm thấy kết quả",
+  subMessage = `Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm sản phẩm!`,
   className,
 }) => {
   return (
     <div
       className={twMerge(
         "flex flex-col items-center justify-center rounded bg-neutral-100 text-center text-neutral-800",
-        "p-5 text-neutral-600",
+        "px-5 py-20 text-neutral-600",
         className
       )}
     >

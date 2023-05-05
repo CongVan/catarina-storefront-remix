@@ -27,14 +27,6 @@ export default function SearchPage() {
 
   return (
     <div className="container mx-auto">
-      <div className="mb-5 space-x-4">
-        <SfLink to="/" className="text-sm" as={Link}>
-          Home
-        </SfLink>
-        <SfLink variant="secondary" className="text-sm">
-          Tìm sản phẩm
-        </SfLink>
-      </div>
       <ProductList promise={promise as any} showCount={true} />
     </div>
   );

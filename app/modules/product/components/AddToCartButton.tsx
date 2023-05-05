@@ -47,8 +47,8 @@ export const AddToCartButton: React.FC<{
 
   return (
     <div className="items-start sm:flex ">
-      <div className="mb-2 flex flex-col items-stretch sm:mb-0 xs:inline-flex xs:items-center">
-        <div className="flex rounded-md border border-neutral-300">
+      <div className="mb-2 flex w-full flex-col items-stretch sm:mb-0 md:w-auto xs:inline-flex xs:items-center">
+        <div className="flex w-full rounded-md border border-neutral-300 md:w-auto">
           <SfButton
             type="button"
             variant="tertiary"
@@ -93,7 +93,7 @@ export const AddToCartButton: React.FC<{
           <SfButton
             type="button"
             size="lg"
-            className="relative w-full overflow-hidden font-thin uppercase xs:ml-4"
+            className="relative w-full overflow-hidden font-thin uppercase md:ml-4"
             slotPrefix={<IconShoppingCart className="h-6 w-6" />}
             disabled={variant === null || isLoading}
             onClick={() => handle(onClickAddToCart)}

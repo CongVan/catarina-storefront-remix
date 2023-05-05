@@ -40,3 +40,18 @@ export const parseQuery = (str) => {
 export const stringifyQuery = (params) => {
   return qs.stringify(params, { arrayFormat: "indices" });
 };
+
+export const metaTitle = (title = "") => {
+  return ["CATARINA", title || "Nước hoa phong cách"].join(" | ");
+};
+
+export const metaDescription = (desc = "") => {
+  return ["CATARINA", desc || "Nước hoa làm nên phong cách"].join(" | ");
+};
+
+export const getFullName = (first, last) => {
+  if (first && last) {
+    return first + " " + last;
+  }
+  return first || last || "";
+};
