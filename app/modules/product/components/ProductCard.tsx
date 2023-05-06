@@ -1,6 +1,7 @@
 import { Link } from "@remix-run/react";
 import { SfCounter, SfLink, SfRating } from "@storefront-ui/react";
 import { twMerge } from "tailwind-merge";
+import LazyImage from "~/components/LazyImage";
 import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
 import type { Product } from "~/types/product";
 
@@ -27,7 +28,7 @@ export default function ProductCard({
     >
       <div className="relative py-6">
         <Link to={linkToDetail} className="p-5">
-          <img
+          <LazyImage
             src={images?.[0].src}
             alt={name}
             className="mx-auto aspect-square h-auto w-[120px] max-w-[160px] rounded-md object-contain md:w-full"

@@ -7,6 +7,7 @@ import {
 } from "@storefront-ui/react";
 
 import { twMerge } from "tailwind-merge";
+import LazyImage from "~/components/LazyImage";
 import { AddToWishListButton } from "~/modules/product/components/AddToWishListButton";
 import type { Product } from "~/types/product";
 
@@ -35,7 +36,7 @@ export function ProductHorizontalCard({
     >
       <div className="relative w-[120px] min-w-[120px]">
         <SfLink href={linkToDetail} className="">
-          <img
+          <LazyImage
             src={images?.[0].src}
             alt={name}
             className=" aspect-square  rounded-md object-contain"

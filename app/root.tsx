@@ -91,7 +91,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <html lang="en">
+      <html lang="vi">
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -131,7 +131,6 @@ export default function App() {
             }}
           />
           <Scripts />
-          <LiveReload />
         </body>
       </html>
     </QueryClientProvider>
@@ -146,10 +145,17 @@ export const meta: V2_MetaFunction<typeof loader> = () => {
   return [
     {
       title: metaTitle(),
+      charSet: "utf-8",
     },
     {
       property: "description",
+      charSet: "utf-8",
       content: metaDescription(),
+    },
+    {
+      property: "viewport",
+      charSet: "utf-8",
+      content: "width=device-width,initial-scale=1",
     },
   ];
 };

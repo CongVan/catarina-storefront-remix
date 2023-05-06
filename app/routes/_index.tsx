@@ -48,8 +48,6 @@ export const loader = async (a: LoaderArgs) => {
   return defer({ promiseLatest, promisePopular, categoriesPromises });
 };
 
-export const meta: V2_MetaFunction = () => [{ title: "Remix Notes" }];
-
 export default function Index() {
   const { promiseLatest, promisePopular, categoriesPromises } =
     useLoaderData<typeof loader>();
