@@ -23,3 +23,8 @@ export interface RootLoaderData {
 }
 
 export type Maybe<T> = T | null;
+
+export type CategoryQueryParams = {
+  attribute?: string;
+  attribute_term?: number;
+} | null;

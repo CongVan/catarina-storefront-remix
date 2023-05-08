@@ -39,11 +39,15 @@ export class BaseAPI<T> {
     };
   }
 
-  async detail(id, config?: AxiosRequestConfig) {
+  async detail(id, config?: AxiosRequestConfig & { id?: any }) {
     if (!id) {
       throw new AxiosError("id is require");
     }
-    const { data } = await this.client.get<T>(this.resource(id), config);
+    let url = this.resource(id);
+    if (config?.id) {
+      url = this.resource(config.id) + "/" + id;
+    }
+    const { data } = await this.client.get<T>(url, config);
     return { data };
   }
 

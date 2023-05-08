@@ -10,7 +10,6 @@ import type { ProductVariant } from "~/types/product-variations";
 export const ProductVariants: React.FC = () => {
   const { product, promiseVariants } = useLoaderData<typeof loader>();
   const { data } = useAsyncValue() as Awaited<typeof promiseVariants>;
-  console.log("variants", data);
 
   const [currentVariant, setVariant] = useState<ProductVariant | null>(null);
   return (

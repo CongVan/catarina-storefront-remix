@@ -38,7 +38,7 @@ export const parseQuery = (str) => {
 };
 
 export const stringifyQuery = (params) => {
-  return qs.stringify(params, { arrayFormat: "indices" });
+  return qs.stringify(params, { arrayFormat: "comma" });
 };
 
 export const metaTitle = (title = "") => {

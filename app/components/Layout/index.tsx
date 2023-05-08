@@ -14,7 +14,7 @@ export const Layout = React.memo(function () {
   return (
     <>
       <Header />
-      <main className="mt-2">
+      <main className="mb-32 mt-2 grow">
         <Breadcrumbs />
 
         <Outlet />

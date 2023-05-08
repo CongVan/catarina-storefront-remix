@@ -145,16 +145,15 @@ export const meta: V2_MetaFunction<typeof loader> = () => {
   return [
     {
       title: metaTitle(),
-      charSet: "utf-8",
     },
     {
       property: "description",
-      charSet: "utf-8",
+
       content: metaDescription(),
     },
     {
       property: "viewport",
-      charSet: "utf-8",
+
       content: "width=device-width,initial-scale=1",
     },
   ];

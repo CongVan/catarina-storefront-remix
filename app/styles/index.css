@@ -1,17 +1,37 @@
 html {
   font-family: "Public Sans", system-ui, sans-serif;
-  font-weight: 400;
-  color: #18181b;
+  @apply text-neutral-800;
 }
+body {
+  min-height: 100vh;
+  @apply flex flex-col;
+}
+
 *:focus:not(.focus-visible) {
   outline: none !important;
 }
 
-/* Optional: Customize .focus-visible */
-.focus-visible {
-  outline-color: lightgreen !important;
-}
-
 .currency {
   @apply font-semibold tracking-wider;
+}
+
+.scroll {
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }

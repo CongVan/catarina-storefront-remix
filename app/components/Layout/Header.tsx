@@ -58,6 +58,12 @@ export default function TopNav() {
               {c.name}
             </Link>
           ))}
+          <Link
+            to={"/brand"}
+            className="flex h-full items-center border-r border-neutral-200 px-5 py-1.5"
+          >
+            Thương hiệu
+          </Link>
         </nav>
       </div>
     </div>

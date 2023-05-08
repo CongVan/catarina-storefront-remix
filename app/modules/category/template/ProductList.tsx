@@ -11,7 +11,7 @@ import type { WooResponse } from "~/types/common";
 import type { Product } from "~/types/product";
 
 type Props = {
-  promise: Promise<WooResponse<Product[]>>;
+  promise: ReturnType<typeof CommerceAPI.products.list>;
   showCount?: boolean;
 };
 export const ProductList: React.FC<Props> = ({ promise, showCount }) => {
